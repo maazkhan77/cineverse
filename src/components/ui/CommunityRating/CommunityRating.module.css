@@ -1,0 +1,58 @@
+.container {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.emptyState {
+  padding: var(--space-4);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.mainScore {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.scoreWrapper {
+  display: flex;
+  align-items: baseline;
+}
+
+.score {
+  font-size: var(--text-4xl);
+  font-weight: 900;
+  color: var(--color-accent);
+  line-height: 1;
+}
+
+.maxScore {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.starsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.totalRatings {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.distribution {
+  display: none; /* Hidden for now until backend fully supports distribution calculation/caching */
+}

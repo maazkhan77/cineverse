@@ -1,0 +1,1 @@
+export { ContentModal } from "./ContentModal";

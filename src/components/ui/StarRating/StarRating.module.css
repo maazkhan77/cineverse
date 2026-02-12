@@ -1,0 +1,124 @@
+/* Star Rating Component */
+.container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.interactive {
+  cursor: pointer;
+}
+
+.starButton {
+  position: relative;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: inherit;
+}
+
+.starButton:disabled {
+  cursor: default;
+}
+
+/* Size variants */
+.sm .starButton { width: 16px; height: 16px; }
+.md .starButton { width: 24px; height: 24px; }
+.lg .starButton { width: 32px; height: 32px; }
+
+.starEmpty {
+  width: 100%;
+  height: 100%;
+  color: var(--color-text-muted);
+}
+
+.starFillWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.starFill {
+  width: 100%;
+  height: 100%;
+  color: #fbbf24; /* Gold */
+}
+
+.value {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.maxValue {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+/* Rating Badges */
+.badgesContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+
+.badge.fresh {
+  background: rgba(0, 200, 0, 0.1);
+  border-color: rgba(0, 200, 0, 0.3);
+}
+
+.badge.rotten {
+  background: rgba(200, 0, 0, 0.1);
+  border-color: rgba(200, 0, 0, 0.3);
+}
+
+.badge[data-score="good"] {
+  background: rgba(102, 204, 51, 0.1);
+  border-color: rgba(102, 204, 51, 0.3);
+}
+
+.badge[data-score="mixed"] {
+  background: rgba(255, 204, 51, 0.1);
+  border-color: rgba(255, 204, 51, 0.3);
+}
+
+.badge[data-score="bad"] {
+  background: rgba(255, 0, 0, 0.1);
+  border-color: rgba(255, 0, 0, 0.3);
+}
+
+.badgeIcon {
+  font-weight: 700;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badgeValue {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.badgeCount {
+  color: var(--color-text-muted);
+  font-size: 10px;
+}

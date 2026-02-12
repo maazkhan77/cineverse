@@ -1,0 +1,242 @@
+/* ==============================================
+   MOVIES / SERIES PAGE - Grid Layout with Infinite Scroll
+   ============================================== */
+
+.main {
+  padding-top: 100px;
+  padding-bottom: var(--space-16);
+  min-height: 100vh;
+}
+
+/* ============ HEADER ============ */
+.header {
+  padding: 0 var(--space-6);
+  max-width: 1400px;
+  margin: 0 auto var(--space-8);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-4);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: var(--font-extrabold);
+  letter-spacing: var(--tracking-tight);
+  margin-bottom: var(--space-2);
+}
+
+.subtitle {
+  color: var(--color-text-secondary);
+  font-size: var(--text-base);
+}
+
+.filterButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.filterButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-accent);
+}
+
+/* ============ CONTENT ============ */
+.content {
+  padding: 0 var(--space-6);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 24px;
+  row-gap: 32px;
+}
+
+/* ============ LOADING STATES ============ */
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16);
+  gap: var(--space-4);
+  color: var(--color-text-muted);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: var(--space-10);
+  color: var(--color-text-muted);
+}
+
+.error {
+  color: var(--color-error);
+}
+
+/* ============ NO RESULTS ============ */
+.noResults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-16);
+  gap: var(--space-4);
+  color: var(--color-text-muted);
+}
+
+.noResultsIcon {
+  font-size: 4rem;
+  opacity: 0.5;
+}
+
+.resetButton {
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-accent);
+  color: white;
+  font-weight: var(--font-semibold);
+  border-radius: var(--radius-md);
+  transition: opacity var(--transition-fast);
+}
+
+.resetButton:hover {
+  opacity: 0.9;
+}
+
+/* ============ INFINITE SCROLL ============ */
+.loadMore {
+  padding: var(--space-8);
+  min-height: 100px;
+}
+
+.loadingMoreIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.loadingMoreIndicator .spinner {
+  width: 24px;
+  height: 24px;
+  border-width: 2px;
+}
+
+.endMessage {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  border-top: 1px solid var(--color-border);
+  margin-top: var(--space-8);
+}
+
+/* ============ LEGACY PAGINATION (kept for reference) ============ */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+  padding: var(--space-4);
+}
+
+.pageButton {
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.pageButton:hover:not(:disabled) {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-border-hover);
+}
+
+.pageButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .main {
+    padding-top: 80px;
+    padding-bottom: 100px;
+  }
+
+  .header {
+    padding: 0 var(--space-4);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .filterButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .content {
+    padding: 0 var(--space-4);
+  }
+
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    row-gap: 24px;
+  }
+
+  .title {
+    font-size: var(--text-2xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    row-gap: 20px;
+  }
+}

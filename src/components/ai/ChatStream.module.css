@@ -1,0 +1,149 @@
+.streamContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.messageRow {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  opacity: 0;
+  animation: fadeSlideIn 0.4s ease forwards;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.avatar.user {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.avatar.assistant {
+  background: linear-gradient(135deg, var(--color-accent), #ff6b6b);
+  color: white;
+  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
+}
+
+.messageContent {
+  flex: 1;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #e5e5e5;
+}
+
+.messageContent strong {
+  color: white;
+  font-weight: 600;
+}
+
+/* User messages get a subtle background */
+.messageRow.user .messageContent {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem 1.25rem;
+  border-radius: 16px;
+  border-bottom-left-radius: 4px;
+}
+
+/* AI messages are clean */
+.messageRow.assistant .messageContent {
+  padding-top: 0.25rem;
+}
+
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: var(--color-accent);
+  margin-left: 2px;
+  animation: blink 1s step-end infinite;
+  vertical-align: middle;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Movie Cards (for future embedded results) */
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.movieCard {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.movieCard:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.moviePoster {
+  aspect-ratio: 2/3;
+  background: rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.movieInfo {
+  padding: 0.75rem;
+}
+
+.movieTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.movieYear {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .messageRow {
+    gap: 12px;
+  }
+  
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+  
+  .messageContent {
+    font-size: 0.95rem;
+  }
+}

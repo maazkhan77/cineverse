@@ -1,0 +1,90 @@
+.buttonContainer {
+  position: relative;
+  display: inline-flex;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  outline: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* The fixed bottom layer (the "depth") */
+.buttonBottom {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  z-index: 0;
+}
+
+/* The moving top layer (the "face") */
+.buttonTop {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  height: 100%;
+  padding: 12px 24px;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  letter-spacing: 0.05em;
+  z-index: 1;
+  transform: translateY(-4px);
+  transition: transform 0.1s cubic-bezier(0.3, 0.7, 0.4, 1.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Press State */
+.buttonContainer:active .buttonTop {
+  transform: translateY(-1px); /* Moves down, squishing the bottom layer illusion */
+}
+
+/* === VARIANTS === */
+
+/* Primary (Cinematic Red) */
+.primary .buttonBottom {
+  background-color: #8f060d; /* Darker red shade for depth */
+}
+
+.primary .buttonTop {
+  background-color: var(--color-accent);
+  color: white;
+  box-shadow: 
+    0 2px 0 rgba(255, 255, 255, 0.1) inset, /* Top Highlight */
+    0 -1px 0 rgba(0, 0, 0, 0.1) inset;     /* Bottom Shadow */
+}
+
+.primary:hover .buttonTop {
+  background-color: var(--color-accent-hover);
+}
+
+/* Secondary (Glass/Dark Metal) */
+.secondary .buttonBottom {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.secondary .buttonTop {
+  background-color: rgba(20, 20, 20, 0.8);
+  backdrop-filter: blur(8px);
+  color: var(--color-text);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.secondary:hover .buttonTop {
+  background-color: rgba(40, 40, 40, 0.9);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Optional: Icon adjustment */
+.icon {
+  display: flex;
+  align-items: center;
+}

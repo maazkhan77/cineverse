@@ -1,0 +1,145 @@
+/* Floating Dock - Mobile Navigation Only */
+.dockContainer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: none; /* Hidden by default (desktop) */
+  align-items: flex-end;
+  gap: 8px;
+  padding: 12px 16px 20px 16px; /* Extra bottom padding for safe area */
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* Show only on mobile */
+@media (max-width: 768px) {
+  .dockContainer {
+    display: flex;
+    justify-content: space-around;
+  }
+}
+
+.dockItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smoother curve */
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.dockItem:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  margin-bottom: 8px; /* More pronounced jump up */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2px;
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  top: -48px;
+  background: rgba(20, 20, 20, 0.9);
+  color: rgba(255, 255, 255, 0.9);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform: translateY(8px) scale(0.9);
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.dockItem:hover .tooltip {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* The Central AI Button (Oracle) */
+.aiButton {
+  width: 64px; /* Larger than others */
+  height: 64px;
+  background: linear-gradient(135deg, hsl(280, 80%, 60%), hsl(340, 80%, 60%)); /* Deep Purple to Pink */
+  color: white;
+  box-shadow: 
+    0 8px 20px -4px rgba(236, 72, 153, 0.4),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aiButton:hover {
+  transform: scale(1.15) translateY(-8px);
+  box-shadow: 
+    0 12px 30px -4px rgba(236, 72, 153, 0.6),
+    inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.aiIcon {
+  width: 32px;
+  height: 32px;
+  animation: pulse 3s infinite ease-in-out;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+@keyframes pulse {
+  0% { opacity: 0.9; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0.9; transform: scale(1); }
+}
+
+/* Active State indicator */
+.activeDot {
+  position: absolute;
+  bottom: -8px;
+  width: 5px;
+  height: 5px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 0 8px rgba(255,255,255,0.6);
+}
+
+.dockItem.active .activeDot {
+  opacity: 1;
+}
+
+/* Navigation Group */
+.group {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+/* Separator */
+.divider {
+  width: 1px;
+  height: 32px;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.15), transparent);
+  margin: 0 8px;
+  align-self: center;
+}

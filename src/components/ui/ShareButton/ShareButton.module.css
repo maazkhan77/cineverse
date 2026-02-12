@@ -1,0 +1,133 @@
+/* ==============================================
+   SHARE BUTTON - Premium Social Sharing
+   ============================================== */
+
+.wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* Main Share Button */
+.shareButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-sans);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-fast);
+}
+
+/* Button variant - full styled button */
+.shareButton.button {
+  padding: var(--space-3) var(--space-5);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-full);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+}
+
+.shareButton.button:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Icon variant - just the icon */
+.shareButton.icon {
+  padding: var(--space-2);
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-full);
+}
+
+.shareButton.icon:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text);
+}
+
+/* Icon styling */
+.icon {
+  width: 18px;
+  height: 18px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Backdrop for dropdown */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+}
+
+/* Dropdown Menu */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 101;
+  min-width: 200px;
+  padding: var(--space-2);
+  background: var(--color-surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+/* Dropdown Items */
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-3);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.dropdownItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dropdownItem:active {
+  transform: scale(0.98);
+}
+
+.itemIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  font-size: 1rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .dropdown {
+    position: fixed;
+    top: auto;
+    bottom: 100px; /* Above mobile nav */
+    left: 16px;
+    right: 16px;
+    min-width: auto;
+  }
+  
+  .backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+}

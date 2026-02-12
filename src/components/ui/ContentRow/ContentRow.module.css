@@ -1,0 +1,123 @@
+.section {
+  margin-bottom: var(--space-10);
+}
+
+.title {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  padding-left: var(--space-1);
+  border-left: 3px solid var(--color-accent);
+  padding-left: var(--space-3);
+  margin-left: -1px; /* Optical alignment */
+}
+
+.row {
+  display: flex;
+  gap: var(--space-4);
+  overflow-x: auto;
+  padding-bottom: var(--space-4);
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  padding-right: var(--space-4); /* End padding */
+}
+
+/* Hide scrollbar but keep functionality */
+.row::-webkit-scrollbar {
+  display: none;
+}
+
+.skeletonCard {
+  width: 100%;
+  aspect-ratio: 2/3;
+  border-radius: var(--radius-lg);
+}
+
+.card {
+  flex-shrink: 0;
+  width: 180px;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: var(--text-lg);
+  }
+
+  .card {
+    width: 140px;
+  }
+}
+
+.container {
+  position: relative;
+  /* Ensure hover effects work for the children */
+  isolation: isolate; 
+}
+
+/* Base style for scroll buttons */
+.scrollButton {
+  position: absolute;
+  top: 0;
+  bottom: var(--space-4); /* Match row padding-bottom */
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none; /* Let clicks pass through when hidden/low opacity if needed, but we toggle visibility via JS mostly */
+}
+
+/* Make them interactive when visible */
+.scrollButton.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Left Button */
+.scrollLeft {
+  left: 0;
+  background: linear-gradient(to right, var(--color-bg) 0%, transparent 100%);
+  justify-content: flex-start;
+  padding-left: var(--space-2);
+}
+
+/* Right Button */
+.scrollRight {
+  right: 0;
+  background: linear-gradient(to left, var(--color-bg) 0%, transparent 100%);
+  justify-content: flex-end;
+  padding-right: var(--space-2);
+}
+
+/* The arrow icon styling */
+.arrowIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.scrollButton:hover .arrowIcon {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+/* Hide on mobile/touch devices where swipe is natural */
+@media (hover: none) and (pointer: coarse) {
+  .scrollButton {
+    display: none;
+  }
+}

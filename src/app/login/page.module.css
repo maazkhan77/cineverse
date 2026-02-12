@@ -1,0 +1,398 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  background: var(--color-bg);
+}
+
+/* ============ LEFT PANEL - IMAGE SECTION ============ */
+.heroPanel {
+  flex: 1;
+  position: relative;
+  display: none;
+  overflow: hidden;
+}
+
+@media (min-width: 900px) {
+  .heroPanel {
+    display: block;
+  }
+}
+
+.heroImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.4) 50%,
+    rgba(229, 9, 20, 0.2) 100%
+  );
+}
+
+.heroContent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-12);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
+}
+
+.heroTitle {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: var(--font-bold);
+  color: white;
+  margin-bottom: var(--space-4);
+  line-height: 1.1;
+}
+
+.heroSubtitle {
+  font-size: var(--text-lg);
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+.featureList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-base);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.featureIcon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(229, 9, 20, 0.2);
+  border-radius: 50%;
+  color: var(--color-accent);
+  font-size: 12px;
+}
+
+/* ============ RIGHT PANEL - AUTH SECTION ============ */
+.authPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-8);
+  min-height: 100vh;
+  background: linear-gradient(
+    180deg,
+    var(--color-bg) 0%,
+    rgba(20, 20, 30, 1) 100%
+  );
+  position: relative;}
+
+@media (min-width: 900px) {
+  .authPanel {
+    max-width: 600px;
+  }
+}
+
+.authContainer {
+  width: 100%;
+  max-width: 420px;
+}
+
+.backButtonWrapper {
+  position: absolute;
+  top: 32px;
+  left: 32px;
+  z-index: 50;
+  /* Button3D handles its own size, but we ensure wrapper doesn't collapse */
+  display: flex;
+}
+
+/* Responsiveness for back button wrapper */
+@media (max-width: 768px) {
+  .backButtonWrapper {
+    top: 24px;
+    left: 24px;
+  }
+}
+
+.backButton:hover {
+  color: white;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-accent);
+  margin-bottom: var(--space-2);
+  letter-spacing: -0.02em;
+}
+
+.authTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: var(--font-bold);
+  color: white;
+  margin-bottom: var(--space-2);
+}
+
+.authSubtitle {
+  font-size: var(--text-base);
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: var(--space-8);
+}
+
+/* ============ OAUTH BUTTONS ============ */
+.oauthButtons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+/* ============ DIVIDER ============ */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dividerText {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ============ FORM ============ */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.error {
+  padding: var(--space-3);
+  background: rgba(229, 9, 20, 0.1);
+  border: 1px solid rgba(229, 9, 20, 0.3);
+  border-radius: var(--radius-md);
+  color: #ff6b6b;
+  font-size: var(--text-sm);
+}
+
+.submitButton {
+  width: 100%;
+  margin-top: var(--space-4);
+}
+
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ============ PASSWORD WRAPPER ============ */
+.passwordWrapper {
+  position: relative;
+}
+
+.passwordWrapper .input {
+  padding-right: 50px;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast);
+}
+
+.passwordToggle:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ============ PASSWORD STRENGTH ============ */
+.passwordStrength {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.strengthBar {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+  height: 4px;
+}
+
+.strengthSegment {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  transform-origin: left;
+}
+
+.strengthLabel {
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 50px;
+}
+
+/* ============ FLOATING PARTICLES ============ */
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle, rgba(229, 9, 20, 0.6) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+/* ============ ENHANCED OAUTH HOVER ============ */
+/* Removed as OAuth buttons now use Button3D */
+
+/* ============ MODE SWITCH ============ */
+.modeSwitch {
+  text-align: center;
+  margin-top: var(--space-8);
+  font-size: var(--text-base);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.modeSwitchButton {
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+  margin-left: var(--space-1);
+}
+
+.modeSwitchButton:hover {
+  color: #ff4444;
+  text-decoration: underline;
+}
+
+/* ============ LOADING ============ */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 899px) {
+  .authPanel {
+    padding: var(--space-6);
+  }
+  
+  .authContainer {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .authPanel {
+    padding: var(--space-4);
+  }
+  
+  .authTitle {
+    font-size: 1.5rem;
+  }
+}
+
+/* ============ GUEST LOGIN ============ */
+.guestButton {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-sans);
+}
+
+.guestButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.guestButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

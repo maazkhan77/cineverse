@@ -1,0 +1,54 @@
+
+.container {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05); /* Glass background */
+  padding: 4px;
+  border-radius: var(--radius-lg);
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.option {
+  flex: 1;
+  position: relative;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.6);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 1;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.option:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.option.active {
+  color: white;
+}
+
+.activeBackground {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.1); /* Slightly lighter glass */
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  z-index: -1;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.label {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

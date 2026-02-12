@@ -1,0 +1,190 @@
+/* TrailerDeck Container */
+.deckContainer {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* Mobile viewport fix */
+  background: #000;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.deckContainer::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+/* Individual Slide */
+.slide {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Ambient Background Layer */
+.ambientLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambientImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(80px) saturate(150%) brightness(0.6);
+  transform: scale(1.2); /* Remove edge bleed */
+}
+
+/* Cinematic Video Layer */
+.videoLayer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 100%; /* Don't exceed width */
+  aspect-ratio: 16 / 9;
+  background: black;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* On desktop, limit width so it doesn't look absurdly tall/wide */
+@media (min-width: 1024px) {
+  .videoLayer {
+    width: 80%; /* Boxed look on desktop */
+    max-height: 80vh; /* Don't exceed height */
+    border-radius: 12px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+}
+
+/* Ensure overflow hidden on all screens to crop scaled iframe */
+.videoLayer {
+  overflow: hidden;
+}
+
+/* Holographic Overlay */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+  pointer-events: none; /* Let clicks pass to video controls */
+  background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 40%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+  padding-bottom: 80px; /* Space for dock/nav */
+}
+
+.overlayContent {
+  pointer-events: auto; /* Re-enable clicks for buttons */
+  transform: translateZ(20px); /* Parallax hint */
+  transition: transform 0.2s ease;
+}
+
+.title {
+  font-family: var(--font-display, sans-serif);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 8px;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  line-height: 1.1;
+}
+
+.tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 100px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.description {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+  margin-bottom: 24px;
+  max-width: 600px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2; /* Standard property */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.primaryButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  color: black;
+  font-weight: 700;
+  padding: 12px 24px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.primaryButton:hover {
+  transform: scale(1.05);
+}
+
+.iconButton {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.iconButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.75rem;
+  }
+  
+  .videoLayer {
+    width: 100%;
+    border-radius: 0;
+  }
+}

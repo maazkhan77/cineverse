@@ -1,0 +1,375 @@
+/* ==============================================
+   NAVBAR - Premium Cinematic Design (Refined)
+   ============================================== */
+
+/* 
+  Design Philosophy: "Silent Luxury"
+  - Minimalist, high contrast, sharp edges.
+  - No cheap gradients or emojis.
+  - "Black Glass" aesthetic.
+*/
+
+/* Default state */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-sticky, 100);
+  padding: 20px 48px; /* Fixed padding to prevent layout shift flicker */
+  transition: all 0.5s ease;
+  border: none;
+  /* GPU Isolation */
+  transform: translateZ(0); 
+}
+
+/* Glass Background Layer via Pseudo-element for smooth opacity transition */
+.navbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  box-shadow: 0 4px 40px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+/* Gradient Overlay for initial state (optional, or kept on main element) */
+.navbar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%);
+  opacity: 1;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+/* Scrolled state */
+.navbar.scrolled::before {
+  opacity: 1; /* Fade in glass */
+}
+
+.navbar.scrolled::after {
+  opacity: 0; /* Fade out gradient */
+}
+
+.navbar.scrolled {
+  padding: 16px 48px; /* Slight shrink is okay if handled well, but removing if flicker persists */
+  /* Remove direct background/backdrop properties from here */
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  border: none;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1800px; /* Ultra-wide for cinematic feel */
+  margin: 0 auto;
+}
+
+/* ============ LOGO ============ */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  /* Removed invalid 'group' property */
+}
+
+.logoText {
+  font-family: var(--font-display); 
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  color: white;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.logoIcon {
+  color: var(--color-accent);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.logo:hover .logoIcon {
+  transform: rotate(180deg);
+}
+
+/* ============ CENTER NAVIGATION ============ */
+.centerNav {
+  display: flex;
+  align-items: center;
+  gap: 32px; /* Generous spacing */
+}
+
+.navLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  padding: 8px 0;
+}
+
+.navLink:hover,
+.navLink.active {
+  color: white;
+}
+
+/* Underline Animation */
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 1px;
+  background: var(--color-accent);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px var(--color-accent); /* Subtle glow */
+}
+
+.navLink:hover::after,
+.navLink.active::after {
+  width: 100%;
+}
+
+.navDropdown {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.chevron {
+  opacity: 0.4;
+  transition: transform 0.3s ease;
+}
+
+.navDropdown:hover .chevron {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+/* ============ MEGA MENU ============ */
+.megaBackdrop {
+  position: fixed;
+  top: 80px; /* Offset for navbar */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 80;
+}
+
+.megaMenu {
+  position: absolute;
+  top: 100%; /* Anchor to bottom of nav link */
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 16px;
+  width: 600px;
+  background: #0A0A0A; /* Solid matte black for premium feel */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 
+    0 20px 60px -10px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255,255,255,0.05) inset;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.megaContent {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr; /* Asymmetric grid */
+  height: 400px;
+}
+
+/* Left: Genres */
+.megaMain {
+  padding: 32px;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.megaSidebar {
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sectionTitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 20px;
+}
+
+.genreGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.genreLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.genreLink:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  transform: translateX(4px);
+}
+
+.genreIcon {
+  color: var(--color-accent);
+  opacity: 0.8;
+}
+
+/* Right: Quick Links */
+.quickLinkList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.featuredLink {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  text-decoration: none;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.featuredLink:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.featuredIconWrapper {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 6px;
+  color: var(--color-accent);
+}
+
+.featuredText h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.featuredText p {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ============ ACTIONS ============ */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 8px;
+}
+
+.iconButton:hover {
+  color: white;
+}
+
+/* Premium AI Button - "Holographic" */
+.aiButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.aiButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.aiButton:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 20px rgba(229, 9, 20, 0.2); /* Red glow */
+  transform: translateY(-1px);
+}
+
+.aiButton:hover::before {
+  left: 100%;
+}
+
+.aiSparkle {
+  color: var(--color-accent);
+}
+
+/* ============ MOBILE ============ */
+@media (max-width: 768px) {
+  .navbar {
+    display: none;
+  }
+}
+
+/* Large Screens */
+@media (min-width: 1600px) {
+    .container {
+        max-width: 2000px;
+        padding: 0 40px;
+    }
+}

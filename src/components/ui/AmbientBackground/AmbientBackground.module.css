@@ -1,0 +1,32 @@
+/* ==============================================
+   AMBIENT BACKGROUND - Cinematic Atmosphere
+   ============================================== */
+
+.container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+/* Static Gradient for Performance */
+.staticGradient {
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 15% 15%, rgba(229, 9, 20, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(45, 27, 78, 0.2) 0%, transparent 60%);
+  filter: blur(80px);
+  z-index: 1;
+}
+
+.noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opactiy='1'/%3E%3C/svg%3E");
+  z-index: 2;
+  mix-blend-mode: overlay;
+}
