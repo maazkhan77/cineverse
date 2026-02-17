@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAction, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import styles from "./MatchPointLobby.module.css";
+import styles from "./CanimaSyncLobby.module.css";
 import { motion } from "framer-motion";
 import { Users, Smartphone, Film, Zap, Copy, Check, ArrowRight } from "lucide-react";
 import { Button3D } from "../ui/Button3D/Button3D";
@@ -12,11 +12,11 @@ import { Label } from "../ui/Label/Label";
 import { SegmentedControl } from "../ui/SegmentedControl/SegmentedControl";
 import { SelectionChip } from "../ui/SelectionChip/SelectionChip";
 
-interface MatchPointLobbyProps {
+interface CanimaSyncLobbyProps {
   onJoin: (roomId: string, userId: string, isHost: boolean) => void;
 }
 
-export function MatchPointLobby({ onJoin }: MatchPointLobbyProps) {
+export function CanimaSyncLobby({ onJoin }: CanimaSyncLobbyProps) {
   const [mode, setMode] = useState<"create" | "join">("create");
   const [userName, setUserName] = useState("");
   const [roomCode, setRoomCode] = useState("");
@@ -25,8 +25,8 @@ export function MatchPointLobby({ onJoin }: MatchPointLobbyProps) {
   const [mediaType, setMediaType] = useState<"movie" | "tv">("movie");
   const [selectedProviders, setSelectedProviders] = useState<string[]>([]);
 
-  const createRoom = useMutation(api.matchpoint.createRoom);
-  const joinRoom = useMutation(api.matchpoint.joinRoom);
+  const createRoom = useMutation(api.canimasync.createRoom);
+  const joinRoom = useMutation(api.canimasync.joinRoom);
 
   const PROVIDERS = [
     { id: "8", name: "Netflix" },
@@ -122,7 +122,7 @@ export function MatchPointLobby({ onJoin }: MatchPointLobbyProps) {
         
         <div className={styles.leftContent}>
             <div className={styles.logo}>
-                <Zap fill="currentColor" /> MatchPoint
+                <Zap fill="currentColor" /> CanimaSync
             </div>
             <h1 className={styles.heroTitle}>
                 Swipe.<br/>Match.<br/>Watch.

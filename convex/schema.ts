@@ -151,7 +151,7 @@ export default defineSchema({
     updatedAt: v.number(),
   }).index("by_user", ["userId"]),
 
-  // MatchPoint Rooms
+  // CanimaSync Rooms
   matchRooms: defineTable({
     roomId: v.string(), // 4-char code
     hostId: v.optional(v.id("users")), // Optional because user might not be logged in? For now lets say host is optional or we use a session ID
@@ -166,10 +166,17 @@ export default defineSchema({
       posterPath: v.optional(v.string()),
       releaseDate: v.optional(v.string())
     }))),
+    // Deprecated: Legacy field from MatchPoint, keeping for schema validation
+    currentMatch: v.optional(v.object({
+        tmdbId: v.number(),
+        title: v.string(),
+        posterPath: v.optional(v.string()),
+        releaseDate: v.optional(v.string())
+    })),
     createdAt: v.number(),
   }).index("by_roomId", ["roomId"]),
 
-  // MatchPoint Participants
+  // CanimaSync Participants
   matchParticipants: defineTable({
     roomId: v.string(),
     userId: v.optional(v.string()), // Can be Convex ID or a generated session ID
@@ -178,7 +185,7 @@ export default defineSchema({
     joinedAt: v.number(),
   }).index("by_room", ["roomId"]),
 
-  // MatchPoint Votes
+  // CanimaSync Votes
   matchVotes: defineTable({
     roomId: v.string(),
     userId: v.string(),
@@ -186,6 +193,7 @@ export default defineSchema({
     vote: v.union(v.literal("like"), v.literal("dislike")),
   })
     .index("by_room_movie", ["roomId", "tmdbId"])
-    .index("by_room_user", ["roomId", "userId"]),
+    .index("by_room_user", ["roomId", "userId"])
+    .index("by_room", ["roomId"]), // For fetching all votes in a room
 });
 

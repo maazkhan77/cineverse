@@ -29,7 +29,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "CineVerse - Discover Movies & TV Shows",
+  title: "Canima - Discover Movies & TV Shows",
   description: "AI-powered movie and TV show discovery platform",
 };
 

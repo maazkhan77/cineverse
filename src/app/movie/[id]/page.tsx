@@ -1,6 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CommunityRating, ReviewList, WatchProviders } from "@/components/ui";
+import { CommunityRating } from "@/components/ui/CommunityRating/CommunityRating";
+import { ReviewList } from "@/components/ui/ReviewList/ReviewList";
+import { WatchProviders } from "@/components/ui/WatchProviders/WatchProviders";
+import { MovieCard } from "@/components/ui/MovieCard";
 import styles from "./page.module.css";
 import { MovieInteractions } from "@/components/movie/MovieInteractions";
 import { getMovieDetails } from "@/lib/tmdb";
@@ -210,28 +213,17 @@ export default async function MovieDetailPage({ params }: { params: Promise<{ id
               <h2 className={styles.sectionTitle}>More Like This</h2>
               <div className={styles.similarGrid}>
                 {similar.map((movie: any) => (
-                  <Link
-                    href={`/movie/${movie.id}`}
-                    key={movie.id}
-                    className={styles.similarCard}
-                  >
-                    <div className={styles.similarPoster}>
-                      {movie.poster_path ? (
-                        <Image
-                          src={`https://image.tmdb.org/t/p/w342${movie.poster_path}`}
-                          alt={movie.title}
-                          fill
-                          className={styles.similarImage}
-                        />
-                      ) : (
-                        <div className={styles.noPoster}>🎬</div>
-                      )}
-                      <div className={styles.similarRating}>
-                        ★ {movie.vote_average.toFixed(1)}
-                      </div>
-                    </div>
-                    <p className={styles.similarTitle}>{movie.title}</p>
-                  </Link>
+                  <div key={movie.id} style={{ position: 'relative' }}>
+                    <Link href={`/movie/${movie.id}`} className="absolute inset-0 z-0" aria-label={movie.title} />
+                    <MovieCard
+                      id={movie.id}
+                      title={movie.title}
+                      posterPath={movie.poster_path}
+                      voteAverage={movie.vote_average}
+                      mediaType="movie"
+                      releaseDate={movie.release_date}
+                    />
+                  </div>
                 ))}
               </div>
             </section>

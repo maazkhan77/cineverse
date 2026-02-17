@@ -4,7 +4,7 @@ import { v } from "convex/values";
 /**
  * Content Statistics
  * - Track views, watchlist adds, search hits
- * - Power "Trending on CineVerse" features
+ * - Power "Trending on Canima" features
  */
 
 // Increment view count (called when detail page is viewed)

@@ -93,11 +93,17 @@ export const getRoomState = query({
       .withIndex("by_room", (q) => q.eq("roomId", args.roomId))
       .collect();
 
+    const votes = await ctx.db
+      .query("matchVotes")
+      .withIndex("by_room", (q) => q.eq("roomId", args.roomId))
+      .collect();
+
     return { 
       status: room.status, 
       participants, 
       moviePool: room.moviePool,
       matches: room.matches || [],
+      votes,
       mediaType: room.mediaType,
       providers: room.providers,
       genres: room.genres
@@ -118,7 +124,7 @@ function shuffleArray(array: any[]) {
 export const generateMoviePool = action({
     args: { roomId: v.string() },
     handler: async (ctx, args) => {
-        const room = await ctx.runQuery(api.matchpoint.getRoomState, { roomId: args.roomId });
+        const room = await ctx.runQuery(api.canimasync.getRoomState, { roomId: args.roomId });
         const genres = room?.genres || [];
         const mediaType = room?.mediaType || "movie";
         const providers = room?.providers || [];
@@ -157,7 +163,7 @@ export const generateMoviePool = action({
             // Limit to e.g. 50 to keep document size reasonable, or keep all 60
             const finalPool = shuffledIds.slice(0, 60);
 
-            await ctx.runMutation(api.matchpoint.setRoomActive, { 
+            await ctx.runMutation(api.canimasync.setRoomActive, { 
                 roomId: args.roomId, 
                 movieIds: finalPool 
             });

@@ -1,6 +1,7 @@
 "use client";
 
-import { ContentRow, ContentModal } from "@/components/ui";
+import { ContentRow } from "@/components/ui/ContentRow/ContentRow";
+import { ContentModal } from "@/components/ui/ContentModal/ContentModal";
 import { useAction } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useEffect, useState } from "react";

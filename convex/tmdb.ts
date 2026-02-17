@@ -30,11 +30,47 @@ export const getTrending = action({
   args: {
     page: v.optional(v.number()),
     timeWindow: v.optional(v.union(v.literal("day"), v.literal("week"))),
+    includeTrailers: v.optional(v.boolean()),
   },
-  handler: async (_, { page = 1, timeWindow = "week" }) => {
-    return tmdbFetch(`/trending/all/${timeWindow}`, {
+  handler: async (_, { page = 1, timeWindow = "week", includeTrailers = false }) => {
+    const data = await tmdbFetch(`/trending/all/${timeWindow}`, {
       page: String(page),
     });
+
+    if (includeTrailers && data.results) {
+      const topItems = data.results.slice(0, 6); // Enrich top 6 for Hero
+      const enriched = await Promise.all(
+        topItems.map(async (item: any) => {
+          try {
+             // Skip if not movie/tv (e.g. person)
+             if (item.media_type === "person") return item;
+             
+             const type = item.media_type || "movie"; 
+             const details = await tmdbFetch(`/${type}/${item.id}`, {
+               append_to_response: "videos",
+             });
+             
+             const videos = details.videos?.results || [];
+
+             // Prioritize official "Trailer" type, ensure it's on YouTube
+             // STRICT: Only Trailers, no Teasers to avoid short clips.
+             const trailer = videos.find((v: any) => v.site === "YouTube" && v.type === "Trailer");
+
+             if (trailer) {
+               return { ...item, trailerKey: trailer.key };
+             }
+             return item;
+          } catch (e) {
+            return item;
+          }
+        })
+      );
+      
+      // Merge back
+      data.results.splice(0, 6, ...enriched);
+    }
+    
+    return data;
   },
 });
 
@@ -368,5 +404,27 @@ export const getFeaturedTrailers = action({
       page,
       hasMore,
     };
+  },
+});
+
+export const getTrailer = action({
+  args: {
+    id: v.number(),
+    mediaType: v.union(v.literal("movie"), v.literal("tv")),
+  },
+  handler: async (_, { id, mediaType }) => {
+    try {
+      const details = await tmdbFetch(`/${mediaType}/${id}`, {
+        append_to_response: "videos",
+      });
+      
+      const videos = details.videos?.results || [];
+      // STRICT: Only Trailers
+      const trailer = videos.find((v: any) => v.site === "YouTube" && v.type === "Trailer");
+      
+      return trailer ? trailer.key : null;
+    } catch (e) {
+      return null;
+    }
   },
 });

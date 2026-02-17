@@ -3,25 +3,59 @@
 import { useState, useEffect } from "react";
 import { useQuery, useAction, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { MatchPointLobby } from "@/components/matchpoint/MatchPointLobby";
-import { MatchPointSwipe } from "@/components/matchpoint/MatchPointSwipe";
-import { MatchPointResults } from "@/components/matchpoint/MatchPointResults";
-import styles from "../../components/matchpoint/MatchPointLobby.module.css"; // Reuse lobby styles for waiting
+import { CanimaSyncLobby } from "@/components/canimasync/CanimaSyncLobby";
+import { CanimaSyncWaitingRoom } from "@/components/canimasync/CanimaSyncWaitingRoom";
+import { CanimaSyncSwipe } from "@/components/canimasync/CanimaSyncSwipe";
+import { CanimaSyncResults } from "@/components/canimasync/CanimaSyncResults";
 import { Id } from "../../../convex/_generated/dataModel";
 
-export default function MatchPointPage() {
+export default function CanimaSyncPage() {
   const [roomId, setRoomId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [isHost, setIsHost] = useState(false);
   
   // Polling room state
   // In Convex, queries update automatically!
-  const roomState = useQuery(api.matchpoint.getRoomState, roomId ? { roomId } : "skip");
+  const roomState = useQuery(api.canimasync.getRoomState, roomId ? { roomId } : "skip");
   
-  const generateMoviePool = useAction(api.matchpoint.generateMoviePool);
-  const submitVote = useMutation(api.matchpoint.submitVote);
+  const generateMoviePool = useAction(api.canimasync.generateMoviePool);
+  const submitVote = useMutation(api.canimasync.submitVote);
+  const finishSession = useMutation(api.canimasync.finishSession);
   const getMovies = useAction(api.tmdb.getMovies); // We need this to hydrate the IDs
   
+  // Load session from localStorage on mount
+  useEffect(() => {
+    const savedRoom = localStorage.getItem("canima_roomId");
+    const savedUser = localStorage.getItem("canima_userId");
+    const savedHost = localStorage.getItem("canima_isHost");
+    if (savedRoom && savedUser) {
+        setRoomId(savedRoom);
+        setUserId(savedUser);
+        setIsHost(savedHost === "true");
+    }
+  }, []);
+
+  // Save session to localStorage
+  useEffect(() => {
+    if (roomId && userId) {
+        localStorage.setItem("canima_roomId", roomId);
+        localStorage.setItem("canima_userId", userId);
+        localStorage.setItem("canima_isHost", String(isHost));
+    }
+  }, [roomId, userId, isHost]);
+
+  // Clear session if room is invalid
+  useEffect(() => {
+    if (roomId && roomState === null) {
+        localStorage.removeItem("canima_roomId");
+        localStorage.removeItem("canima_userId");
+        localStorage.removeItem("canima_isHost");
+        setRoomId(null);
+        setUserId(null);
+        setIsHost(false);
+    }
+  }, [roomId, roomState]);
+
   const [movieCards, setMovieCards] = useState<any[]>([]);
   const [sessionLikes, setSessionLikes] = useState<any[]>([]);
 
@@ -74,7 +108,12 @@ export default function MatchPointPage() {
       if (vote === "like") {
         setSessionLikes(prev => [...prev, { ...details, tmdbId }]);
       }
-      await submitVote({ roomId, userId, tmdbId, vote, movieDetails: details });
+      const safeDetails = {
+        title: details.title,
+        posterPath: details.posterPath,
+        releaseDate: details.releaseDate
+      };
+      await submitVote({ roomId, userId, tmdbId, vote, movieDetails: safeDetails });
     }
   };
 
@@ -82,7 +121,7 @@ export default function MatchPointPage() {
     return (
       <main style={{ minHeight: '100vh', background: '#000' }}>
         <div style={{ paddingTop: '80px' }}>
-          <MatchPointLobby onJoin={(rid, uid, host) => {
+          <CanimaSyncLobby onJoin={(rid, uid, host) => {
             setRoomId(rid);
             setUserId(uid);
             setIsHost(host);
@@ -94,37 +133,19 @@ export default function MatchPointPage() {
 
   if (roomState?.status === "waiting") {
     return (
-      <main style={{ minHeight: '100vh', background: '#000', color: 'white' }}>
-        <div style={{ paddingTop: '100px', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
-          <h1>Waiting Lobby</h1>
-          <div className={styles.roomCode}>{roomId}</div>
-          <p className={styles.copyHint}>Share this code with your friends</p>
-          
-          <div className={styles.participantsList}>
-            {roomState.participants.map((p: any) => (
-              <div key={p.userId} className={styles.participant}>
-                {p.isHost ? '👑' : '👤'} {p.name}
-              </div>
-            ))}
-          </div>
-
-          {isHost ? (
-            <button 
-              className={styles.actionButton}
-              onClick={handleStart}
-              disabled={roomState.participants.length < 1} // Can play solo too? Maybe need > 1
-            >
-              Start Game ({roomState.participants.length} Players)
-            </button>
-          ) : (
-            <p>Waiting for host to start...</p>
-          )}
-        </div>
-      </main>
+      <CanimaSyncWaitingRoom 
+        roomId={roomId}
+        participants={roomState.participants.map((p: any) => ({
+          ...p,
+          userId: p.userId || "unknown"
+        }))}
+        isHost={isHost}
+        onStart={handleStart}
+      />
     );
   }
 
-  const finishSession = useMutation(api.matchpoint.finishSession);
+
 
   const handleFinish = async () => {
     if (roomId) {
@@ -139,12 +160,14 @@ export default function MatchPointPage() {
       return (
         <main style={{ minHeight: '100vh', background: '#000' }}>
             {/* Minimal header/nav */}
-            <MatchPointSwipe 
+            <CanimaSyncSwipe 
               movies={movieCards} 
               onVote={handleVote} 
               history={sessionLikes}
               matches={roomState.matches || []}
               onFinish={handleFinish}
+              votes={roomState.votes || []}
+              participants={roomState.participants || []}
             />
         </main>
       );
@@ -155,7 +178,7 @@ export default function MatchPointPage() {
   if (roomState?.status === "matched") {
     return (
         <main style={{ minHeight: '100vh', background: '#000' }}>
-            <MatchPointResults 
+            <CanimaSyncResults 
                 matches={roomState.matches || []} 
             />
         </main>

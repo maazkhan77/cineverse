@@ -5,6 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import styles from "./MovieCardOverlay.module.css";
 import { useEffect, useState } from "react";
+import { useConvexAuth, useMutation, useQuery, useAction } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface MovieCardOverlayProps {
   isOpen: boolean;
@@ -24,16 +28,98 @@ interface MovieCardOverlayProps {
   onClick: () => void;
 }
 
+// Internal component for Watchlist logic to keep main component clean
+function WatchlistButton({ movieId, movieTitle, posterPath, voteAverage, mediaType }: any) {
+  const { isAuthenticated } = useConvexAuth();
+  const router = useRouter();
+  const isInWatchlist = useQuery(api.watchlist.isInWatchlist, { tmdbId: movieId });
+  const addToWatchlist = useMutation(api.watchlist.add);
+  const removeFromWatchlist = useMutation(api.watchlist.remove);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleToggle = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      toast.error("Please login to use watchlist");
+      return; 
+    }
+    
+    setIsLoading(true);
+    try {
+      if (isInWatchlist) {
+        await removeFromWatchlist({ tmdbId: movieId });
+        toast.info("Removed from watchlist");
+      } else {
+        await addToWatchlist({
+          tmdbId: movieId,
+          mediaType,
+          title: movieTitle,
+          posterPath: posterPath || undefined,
+          voteAverage,
+        });
+        toast.success("Added to watchlist");
+      }
+    } catch (err) {
+      toast.error("Failed to update watchlist");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <button 
+      className={styles.actionBtn} 
+      onClick={handleToggle}
+      disabled={isLoading}
+      style={isInWatchlist ? { color: 'var(--color-success)', borderColor: 'var(--color-success)' } : {}}
+    >
+      {isInWatchlist ? (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="16" height="16">
+           <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      ) : (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+      )}
+    </button>
+  );
+}
+
+import { TrailerModal } from "@/components/ui/TrailerModal/TrailerModal";
+
 export function MovieCardOverlay({ isOpen, rect, movie, onClose, onMouseEnter, onClick }: MovieCardOverlayProps) {
   const [mounted, setMounted] = useState(false);
+  const [showTrailer, setShowTrailer] = useState(false);
+  const [trailerKey, setTrailerKey] = useState<string | null>(null);
+  
+  const getTrailer = useAction(api.tmdb.getTrailer);
 
   useEffect(() => {
     setMounted(true);
+    if (isOpen) {
+        getTrailer({ id: movie.id, mediaType: movie.mediaType })
+            .then((key) => setTrailerKey(key))
+            .catch((e) => console.error("Failed to fetch trailer", e));
+    }
     return () => setMounted(false);
-  }, []);
+  }, [isOpen, movie.id, movie.mediaType, getTrailer]);
 
   if (!mounted || !rect || typeof document === 'undefined') return null;
 
+  // IMPORTANT: If playing trailer, we render the Modal INSTEAD of the popover.
+  // This effectively "closes" the popover UI but keeps the component mounted to render the portal.
+  if (showTrailer && trailerKey) {
+     return (
+       <TrailerModal 
+         trailerKey={trailerKey}
+         onClose={() => {
+           setShowTrailer(false);
+           onClose(); // Close the overlay completely when trailer closes
+         }}
+       />
+     );
+  }
 
   // Center alignment logic (Strict Centering)
   // This ensures the expanded card overlaps the trigger logic in all directions
@@ -68,31 +154,8 @@ export function MovieCardOverlay({ isOpen, rect, movie, onClose, onMouseEnter, o
   }
 
   // Check Bottom Edge (Most common issue)
-  // We approximate the expanded height. It's safer to shift UP if we are near the bottom.
-  // We only shift if it actually overflows.
-  // Note: shifting too much might disconnect the mouse from the trigger area.
-  // Ideally, we want to shift the *content* but keep the hit area... 
-  // For now, simpler shift. The grace period in mouseLeave (300ms) handles slight disconnects.
-  
-  // Let's assume a safe height for the content (image + text) ~ 350px-400px?
-  // We'll use a dynamic estimate if needed, but checking `top` vs viewport height is good.
-  
-  // Calculate potential bottom position
-  // Since we don't know exact height until render, we estimate.
-  // But strictly, we defined `top` as centered on the card.
-  // If the card is at the very bottom, `top` + height might overflow.
-  
-  // Use a simpler heuristic: If trigger is in the bottom 40% of screen, shift UP more.
-  /* 
-     Actually, let's just use the `rect.bottom` as a guide. 
-     If the overlay top + predicted height > viewportHeight...
-  */
   
   if (rect.bottom > viewportHeight - 150) { 
-     // We are near bottom. Force overlay to grow UPWARDS from bottom of trigger
-     // New Top = Trigger Bottom - Expanded Height
-     // This is risky if height is unknown.
-     
      // Safer: Just clamp it.
      const predictedBottom = top + height + 100; // Extra buffer for text
      if (predictedBottom > viewportHeight - padding) {
@@ -181,17 +244,35 @@ export function MovieCardOverlay({ isOpen, rect, movie, onClose, onMouseEnter, o
             <div className={styles.content}>
                {/* Actions */}
                <div className={styles.actions}>
-                <button className={`${styles.actionBtn} ${styles.playBtn}`}>
+                <button 
+                   className={`${styles.actionBtn} ${styles.playBtn}`}
+                   onClick={(e) => {
+                     e.stopPropagation();
+                     if (trailerKey) {
+                        setShowTrailer(true);
+                     } else {
+                        onClick(); // Fallback to navigate
+                     }
+                   }}
+                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
                      <path d="M8 5v14l11-7z"/>
                   </svg>
                 </button>
-                <button className={styles.actionBtn}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                    <path d="M12 5v14M5 12h14"/>
-                  </svg>
-                </button>
-                <button className={styles.actionBtn}>
+                <WatchlistButton 
+                  movieId={movie.id} 
+                  movieTitle={movie.title}
+                  posterPath={movie.posterPath}
+                  voteAverage={movie.voteAverage}
+                  mediaType={movie.mediaType}
+                />
+                <button 
+                  className={styles.actionBtn}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onClick();
+                  }}
+                >
                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
                      <circle cx="12" cy="12" r="10" />
                      <path d="M12 16v-4M12 8h.01" />

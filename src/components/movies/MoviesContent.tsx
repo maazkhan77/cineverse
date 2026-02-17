@@ -1,6 +1,6 @@
 "use client";
 
-import { MovieCard } from "@/components/ui";
+import { MovieCard } from "@/components/ui/MovieCard";
 import { useDiscoverMoviesInfinite } from "@/hooks/useTMDB";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useRef, useMemo } from "react";

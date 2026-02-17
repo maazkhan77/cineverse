@@ -129,7 +129,7 @@ export default function ProfilePage() {
     }
   };
 
-  if (isAuthLoading || (!profile && isAuthenticated)) {
+  if (isAuthLoading || profile === undefined) {
     return (
       <div className={styles.loading}>
         <div className={styles.spinner} />
@@ -137,7 +137,7 @@ export default function ProfilePage() {
     );
   }
 
-  if (!profile) return null; // Should redirect via useEffect
+  // if (!profile) return null; // Removed to allow empty state rendering
 
   return (
     <main className={styles.main}>
@@ -164,7 +164,7 @@ export default function ProfilePage() {
             <div className={styles.avatarSection}>
               <div onClick={handleAvatarClick} style={{ position: 'relative', width: 'fit-content', cursor: 'pointer' }}>
                 <Avatar 
-                  src={profile.avatarUrl} 
+                  src={profile?.avatarUrl} 
                   fallback={displayName || "User"} 
                   size="xl"
                   className={styles.profileAvatar}
@@ -191,10 +191,10 @@ export default function ProfilePage() {
               </h1>
               <div className={styles.email}>
                 <Mail size={14} />
-                {profile.email}
+                {profile?.email || "No Email"}
                 <span style={{ margin: '0 8px', opacity: 0.3 }}>|</span>
                 <Calendar size={14} />
-                Joined {new Date(profile.createdAt).toLocaleDateString()}
+                Joined {new Date(profile?.createdAt || Date.now()).toLocaleDateString()}
               </div>
 
               <div className={styles.statsRow}>

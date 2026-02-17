@@ -22,7 +22,7 @@ export function ShareButton({
 
   
   const shareUrl = url || (typeof window !== "undefined" ? window.location.href : "");
-  const shareText = text || `Check out "${title}" on CineVerse!`;
+  const shareText = text || `Check out "${title}" on Canima!`;
 
   const handleShare = async () => {
     // Try native share first (mobile)

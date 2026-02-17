@@ -1,13 +1,13 @@
 "use client";
 
-import styles from "./MatchPointResults.module.css";
+import styles from "./CanimaSyncResults.module.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { useEffect } from "react";
 
-interface MatchPointResultsProps {
+interface CanimaSyncResultsProps {
   matches: {
     tmdbId: number;
     title: string;
@@ -16,7 +16,7 @@ interface MatchPointResultsProps {
   }[];
 }
 
-export function MatchPointResults({ matches }: MatchPointResultsProps) {
+export function CanimaSyncResults({ matches }: CanimaSyncResultsProps) {
   const router = useRouter();
 
   useEffect(() => {

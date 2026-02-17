@@ -1,7 +1,7 @@
 "use client";
 
 import { useAction } from "convex/react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { api } from "../../../convex/_generated/api";
 import TrailerDeck from "@/components/ui/TrailerDeck/TrailerDeck";
 import { TrailerFilters } from "@/components/ui/TrailerDeck/TrailerFilters";
@@ -22,10 +22,14 @@ export default function TrailersPage() {
   const [hasMore, setHasMore] = useState(true);
   const [mediaType, setMediaType] = useState<MediaType>("all");
   const [genreId, setGenreId] = useState<number | null>(null);
+  const lastRequestId = useRef<string | null>(null);
 
 
   // Fetch trailers
   const fetchTrailers = useCallback(async (pageNum: number, reset: boolean = false) => {
+    const requestId = crypto.randomUUID();
+    lastRequestId.current = requestId;
+
     if (reset) {
       setIsLoading(true);
       setTrailers([]); // Clear immediately for filter changes
@@ -40,7 +44,12 @@ export default function TrailersPage() {
         genreId: genreId ?? undefined,
       });
 
-      const newTrailers = data.results as unknown as TrailerData[];
+      // Discard if a newer request has started
+      if (lastRequestId.current !== requestId) {
+        return;
+      }
+
+      const newTrailers = (data?.results || []) as unknown as TrailerData[];
       
       if (reset) {
         setTrailers(newTrailers);
@@ -56,10 +65,15 @@ export default function TrailersPage() {
       setHasMore(data.hasMore);
       setPage(pageNum);
     } catch (err) {
-      console.error("Failed to load trailers", err);
+      // creating a new request ID effectively cancels this one
+      if (lastRequestId.current === requestId) {
+         console.error("Failed to load trailers", err);
+      }
     } finally {
-      setIsLoading(false);
-      setIsLoadingMore(false);
+      if (lastRequestId.current === requestId) {
+        setIsLoading(false);
+        setIsLoadingMore(false);
+      }
     }
   }, [getFeaturedTrailers, mediaType, genreId]);
 

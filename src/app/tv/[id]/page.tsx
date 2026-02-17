@@ -1,8 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CommunityRating, ReviewList, WatchProviders } from "@/components/ui";
+import { CommunityRating } from "@/components/ui/CommunityRating/CommunityRating";
+import { ReviewList } from "@/components/ui/ReviewList/ReviewList";
+import { WatchProviders } from "@/components/ui/WatchProviders/WatchProviders";
+import { MovieCard } from "@/components/ui/MovieCard";
 import styles from "./page.module.css";
-import { TVInteractions } from "@/components/movie/TVInteractions";
+import { MovieInteractions } from "@/components/movie/MovieInteractions";
 import { TVSeasonSelector } from "@/components/movie/TVSeasonSelector";
 import { getTVDetails } from "@/lib/tmdb";
 
@@ -98,11 +101,12 @@ export default async function TVDetailPage({ params }: { params: Promise<{ id: s
               <p className={styles.overview}>{details.overview}</p>
 
               {/* Client Interactions */}
-              <TVInteractions 
-                tvId={details.id}
-                tvName={details.name}
+              <MovieInteractions 
+                movieId={details.id}
+                movieTitle={details.name}
                 posterPath={details.poster_path}
                 voteAverage={details.vote_average}
+                mediaType="tv"
                 trailerKey={trailer?.key}
               />
 
@@ -210,28 +214,17 @@ export default async function TVDetailPage({ params }: { params: Promise<{ id: s
               <h2 className={styles.sectionTitle}>More Like This</h2>
               <div className={styles.similarGrid}>
                 {similar.map((show: any) => (
-                  <Link
-                    href={`/tv/${show.id}`}
-                    key={show.id}
-                    className={styles.similarCard}
-                  >
-                    <div className={styles.similarPoster}>
-                      {show.poster_path ? (
-                        <Image
-                          src={`https://image.tmdb.org/t/p/w342${show.poster_path}`}
-                          alt={show.name}
-                          fill
-                          className={styles.similarImage}
+                    <div key={show.id} style={{ position: 'relative' }}>
+                         <Link href={`/tv/${show.id}`} className="absolute inset-0 z-0" aria-label={show.name} />
+                        <MovieCard
+                          id={show.id}
+                          title={show.name}
+                          posterPath={show.poster_path}
+                          voteAverage={show.vote_average}
+                          mediaType="tv"
+                          releaseDate={show.first_air_date}
                         />
-                      ) : (
-                        <div className={styles.noPoster}>📺</div>
-                      )}
-                      <div className={styles.similarRating}>
-                        ★ {show.vote_average.toFixed(1)}
-                      </div>
                     </div>
-                    <p className={styles.similarTitle}>{show.name}</p>
-                  </Link>
                 ))}
               </div>
             </section>

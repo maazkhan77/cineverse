@@ -1,6 +1,6 @@
 "use client";
 
-import { MovieCard } from "@/components/ui";
+import { MovieCard } from "@/components/ui/MovieCard";
 import { Input } from "@/components/ui/Input/Input";
 import { SelectionChip } from "@/components/ui/SelectionChip/SelectionChip";
 import { Select } from "@/components/ui/Select/Select";

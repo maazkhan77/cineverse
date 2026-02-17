@@ -185,7 +185,34 @@ export function Navbar() {
         {/* Logo */}
         <Link href="/" className={styles.logo}>
           <Clapperboard size={28} strokeWidth={2} className={styles.logoIcon} />
-          <span className={styles.logoText}>CINEVERSE</span>
+          <div className={styles.logoInfo}>
+            <span className={styles.logoText}>CANIMA</span>
+            <div className={styles.pronunciationWrapper}>
+              <span className={styles.pronunciation}>/saneema/</span>
+              <div 
+                role="button"
+                tabIndex={0}
+                className={styles.audioButton}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  new Audio("/assets/audio/canima.mp3").play().catch(() => console.log("Audio file missing - placeholder"));
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    new Audio("/assets/audio/canima.mp3").play().catch(() => console.log("Audio file missing - placeholder"));
+                  }
+                }}
+                aria-label="Play pronunciation"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" className={styles.audioIcon}>
+                  <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
         </Link>
 
         {/* Center Navigation */}
@@ -237,10 +264,10 @@ export function Navbar() {
           </Link>
 
           <Link 
-            href="/matchpoint" 
-            className={`${styles.navLink} ${isActive("/matchpoint") ? styles.active : ""}`}
+            href="/canimasync" 
+            className={`${styles.navLink} ${isActive("/canimasync") ? styles.active : ""}`}
           >
-            MatchPoint
+            CanimaSync
           </Link>
 
           <Link 

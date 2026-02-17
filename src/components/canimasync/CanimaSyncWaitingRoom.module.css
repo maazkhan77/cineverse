@@ -1,0 +1,236 @@
+.container {
+  min-height: 100vh;
+  width: 100vw;
+  background: radial-gradient(circle at center, #1a0000 0%, #000 70%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  color: white;
+}
+
+/* Ambient Background Effects */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.4;
+  z-index: 0;
+  animation: float 10s infinite ease-in-out;
+}
+
+.orb1 {
+  width: 500px;
+  height: 500px;
+  background: var(--color-accent, #e50914);
+  top: -100px;
+  left: 20%;
+}
+
+.orb2 {
+  width: 600px;
+  height: 600px;
+  background: #5b0000;
+  bottom: -200px;
+  right: 10%;
+  animation-delay: -5s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(20px); }
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 800px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.codeContainer {
+  position: relative;
+  margin-bottom: 60px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.codeContainer:active {
+  transform: scale(0.98);
+}
+
+.codeLabel {
+  display: block;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 10px;
+}
+
+.roomCode {
+  font-size: 6rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 12px;
+  background: linear-gradient(to bottom, #fff, #ccc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+  font-family: monospace;
+}
+
+.copyHint {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+  color: var(--color-accent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.codeContainer:hover .copyHint {
+  opacity: 1;
+}
+
+.participantsSection {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 30px;
+  margin-bottom: 40px;
+}
+
+.participantsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.participantsTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+}
+
+.participantsCount {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.participantsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.participantCard {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.participantCard:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.participantCard.isHost {
+  border-color: rgba(255, 215, 0, 0.3);
+  background: linear-gradient(to bottom, rgba(255, 215, 0, 0.05), rgba(255, 255, 255, 0.05));
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #333, #111);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.participantName {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.hostBadge {
+  font-size: 0.7rem;
+  color: #ffd700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.waitingMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+/* Mobile Tweaks */
+@media (max-width: 600px) {
+  .roomCode {
+    font-size: 4rem;
+  }
+  .participantsSection {
+    padding: 20px;
+  }
+}

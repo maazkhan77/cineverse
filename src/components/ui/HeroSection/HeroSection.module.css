@@ -24,26 +24,7 @@
   object-position: center top;
 }
 
-/* Video Wrapper */
-.videoWrapper {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.iframe {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100vw;
-  height: 56.25vw;
-  min-height: 100%;
-  min-width: 177.77%;
-  transform: translate(-50%, -50%);
-  border: none;
-  opacity: 0.7;
-}
+/* Video Wrapper Removed - Using TrailerModal */
 
 /* Gradient Overlay */
 .gradient {

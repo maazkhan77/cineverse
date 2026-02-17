@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Magnetic } from "@/components/ui/Magnetic/Magnetic";
 import { Button3D } from "@/components/ui/Button3D/Button3D";
+import { TrailerModal } from "@/components/ui";
 import styles from "./HeroSection.module.css";
 
 interface HeroItem {
@@ -24,8 +25,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ items, onItemClick }: HeroSectionProps) {
   const [index, setIndex] = useState(0);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const [showTrailer, setShowTrailer] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const currentItem = items[index];
@@ -33,7 +33,7 @@ export function HeroSection({ items, onItemClick }: HeroSectionProps) {
 
   // Auto-rotate items with progress tracking
   useEffect(() => {
-    if (isVideoPlaying && !isMuted) return;
+    if (showTrailer) return; // Pause while trailer modal is open
 
     const startTime = Date.now();
     
@@ -44,8 +44,6 @@ export function HeroSection({ items, onItemClick }: HeroSectionProps) {
 
     const timer = setTimeout(() => {
       setIndex((prev) => (prev + 1) % items.length);
-      setIsVideoPlaying(false);
-      setIsMuted(true);
       setProgress(0);
     }, SLIDE_DURATION);
 
@@ -53,24 +51,12 @@ export function HeroSection({ items, onItemClick }: HeroSectionProps) {
       clearInterval(progressInterval);
       clearTimeout(timer);
     };
-  }, [items.length, isVideoPlaying, isMuted, index]);
-
-  // Attempt to play video after 2s delay
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (currentItem?.trailerKey) {
-        setIsVideoPlaying(true);
-      }
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [currentItem]);
+  }, [items.length, index, showTrailer]);
 
   // Handle indicator click
   const goToSlide = (slideIndex: number) => {
     setIndex(slideIndex);
     setProgress(0);
-    setIsVideoPlaying(false);
-    setIsMuted(true);
   };
 
   if (!currentItem) return null;
@@ -86,28 +72,15 @@ export function HeroSection({ items, onItemClick }: HeroSectionProps) {
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
         >
-          {/* Video Layer */}
-          {isVideoPlaying && currentItem.trailerKey ? (
-            <div className={styles.videoWrapper}>
-              <iframe
-                src={`https://www.youtube.com/embed/${currentItem.trailerKey}?autoplay=1&mute=${isMuted ? 1 : 0}&controls=0&loop=1&playlist=${currentItem.trailerKey}&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&fs=0`}
-                className={styles.iframe}
-                allow="autoplay; encrypted-media"
-              />
-            </div>
-          ) : (
-            // Fallback Image Layer
-            currentItem.backdropPath && (
-              <Image
+          {currentItem.backdropPath && (
+             <Image
                 src={`https://image.tmdb.org/t/p/original${currentItem.backdropPath}`}
                 alt={currentItem.title}
                 fill
                 className={styles.image}
                 priority
               />
-            )
           )}
-          
           <div className={styles.gradient} />
         </motion.div>
       </AnimatePresence>
@@ -133,7 +106,17 @@ export function HeroSection({ items, onItemClick }: HeroSectionProps) {
             <div className={styles.actions}>
               <Button3D 
                 variant="primary"
-                onClick={() => onItemClick?.(currentItem.id, currentItem.mediaType)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log("Trailer button clicked", currentItem);
+                  if (currentItem.trailerKey) {
+                    console.log("Opening trailer", currentItem.trailerKey);
+                    setShowTrailer(true);
+                  } else {
+                    console.log("No trailer key, navigating");
+                    onItemClick?.(currentItem.id, currentItem.mediaType);
+                  }
+                }}
                 icon={
                   <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
                     <path d="M8 5v14l11-7z" />
@@ -161,6 +144,14 @@ export function HeroSection({ items, onItemClick }: HeroSectionProps) {
             </div>
         </motion.div>
       </div>
+
+      {/* Trailer Modal */}
+      {showTrailer && currentItem.trailerKey && (
+        <TrailerModal 
+           trailerKey={currentItem.trailerKey}
+           onClose={() => setShowTrailer(false)}
+        />
+      )}
 
       {/* Modern Slide Indicators - Vertical Lines on Right */}
       <div className={styles.slideIndicators}>

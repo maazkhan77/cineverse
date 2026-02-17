@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import styles from "./MatchPointSwipe.module.css";
+import styles from "./CanimaSyncSwipe.module.css";
 import Image from "next/image";
 import { X, Heart, Info, Play, History, Volume2, VolumeX, MonitorPlay } from "lucide-react";
 import dynamic from "next/dynamic";
 import { CurtainTransition } from "./CurtainTransition";
+import { CanimaSyncCard } from "./CanimaSyncCard";
 
 // Fix for ReactPlayer types with dynamic import
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false }) as any;
@@ -27,15 +28,25 @@ interface Card {
   providers?: any[]; // For StreamSync (if passed)
 }
 
-interface MatchPointSwipeProps {
+interface CanimaSyncSwipeProps {
   movies: Card[];
   onVote: (movieId: number, vote: "like" | "dislike", details: any) => void;
   history?: any[];
   matches?: any[];
   onFinish?: () => void;
+  votes?: any[];
+  participants?: any[];
 }
 
-export function MatchPointSwipe({ movies, onVote, history = [], matches = [], onFinish }: MatchPointSwipeProps) {
+export function CanimaSyncSwipe({ 
+  movies, 
+  onVote, 
+  history = [], 
+  matches = [], 
+  onFinish,
+  votes = [],
+  participants = []
+}: CanimaSyncSwipeProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showCurtain, setShowCurtain] = useState(false);
   const [muted, setMuted] = useState(true);
@@ -45,13 +56,10 @@ export function MatchPointSwipe({ movies, onVote, history = [], matches = [], on
   const [showHistory, setShowHistory] = useState(false);
   const [showMatches, setShowMatches] = useState(false);
 
+  // Scroll to top on index change? Not needed for swipe container usually.
+  
   const currentMovie = movies[currentIndex];
   const nextMovie = movies[currentIndex + 1]; // Preload hint?
-
-  // Find trailer
-  const trailerKey = currentMovie?.videos?.find(
-    (v: any) => v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
-  )?.key;
 
   const handleVote = (vote: "like" | "dislike") => {
     // 1. Trigger Curtain Close
@@ -63,9 +71,6 @@ export function MatchPointSwipe({ movies, onVote, history = [], matches = [], on
         onVote(currentMovie.tmdbId, vote, currentMovie);
         setCurrentIndex(prev => prev + 1);
         
-        // 4. Reset Mute for next video? Or keep user preference.
-        // setMuted(true); 
-
         // 5. Open Curtain
         setTimeout(() => {
             setShowCurtain(false);
@@ -74,6 +79,32 @@ export function MatchPointSwipe({ movies, onVote, history = [], matches = [], on
   };
 
   const toggleMute = () => setMuted(!muted);
+
+  // Calculate Voting Stats for Current Movie
+  const getVotingStats = () => {
+    if (!currentMovie || !votes || !participants) return undefined;
+    
+    // Filter likes for this movie
+    const movieLikes = votes.filter((v: any) => v.tmdbId === currentMovie.tmdbId && v.vote === "like");
+    
+    if (movieLikes.length === 0) return undefined;
+
+    // Map userIds to names
+    const profiles = movieLikes.map((like: any) => {
+        const participant = participants.find((p: any) => p.userId === like.userId);
+        return {
+            name: participant ? participant.name : "Unknown",
+            avatar: "" // Generate avatar letter in Card component
+        };
+    });
+
+    return {
+        count: movieLikes.length,
+        profiles
+    };
+  };
+
+  const votingStats = getVotingStats();
 
   if (!currentMovie) {
     return (
@@ -133,50 +164,19 @@ export function MatchPointSwipe({ movies, onVote, history = [], matches = [], on
     <div className={styles.container}>
       <CurtainTransition show={showCurtain} />
 
-      {/* Video Stage */}
-      <div className={styles.videoStage}>
-        {trailerKey ? (
-            <div className={styles.videoWrapper}>
-                <ReactPlayer
-                    url={`https://www.youtube.com/watch?v=${trailerKey}`}
-                    width="100%"
-                    height="100%"
-                    playing={!showCurtain && !showInfo && !showHistory && !showMatches} // Pause when curtain/modal open
-                    muted={muted}
-                    loop={true}
-                    controls={false}
-                    config={{
-                        youtube: {
-                            playerVars: { showinfo: 0, controls: 0, modestbranding: 1, rel: 0 }
-                        }
-                    }}
-                    style={{pointerEvents: 'none'}} // Prevent interaction with YT embedded
-                />
-            </div>
-        ) : (
-            // Fallback to Poster
-             <div className={styles.videoWrapper}>
-                {currentMovie.posterPath && (
-                    <Image
-                        src={`https://image.tmdb.org/t/p/original${currentMovie.posterPath}`}
-                        alt={currentMovie.title}
-                        fill
-                        style={{objectFit: 'cover'}}
-                    />
-                )}
-             </div>
-        )}
-      </div>
+      {/* Main Card */}
+      <CanimaSyncCard 
+        movie={currentMovie}
+        isActive={!showCurtain && !showInfo && !showHistory && !showMatches}
+        onVote={(vote: "like" | "dislike") => handleVote(vote)}
+        onInfo={() => setShowInfo(currentMovie)}
+        muted={muted}
+        onToggleMute={toggleMute}
+        votingStats={votingStats}
+      />
 
-      {/* Overlays */}
-      <div className={styles.overlayGradient} />
-      <div className={styles.topOverlay} />
-
-      {/* Top Actions */}
+      {/* Top Actions (History/Matches only - Sound moved to Card) */}
       <div className={styles.topActions}>
-        <button className={styles.iconBtn} onClick={toggleMute}>
-            {muted ? <VolumeX size={24} /> : <Volume2 size={24} />}
-        </button>
         <button className={styles.iconBtn} onClick={() => setShowHistory(true)}>
           <History size={24} />
           {history.length > 0 && <span style={{
@@ -195,57 +195,6 @@ export function MatchPointSwipe({ movies, onVote, history = [], matches = [], on
         )}
       </div>
 
-      {/* Control Deck */}
-      <div className={styles.controlDeck}>
-        <div className={styles.movieInfo}>
-            <h1 className={styles.title}>{currentMovie.title}</h1>
-            <div className={styles.meta}>
-                <div className={styles.rating}>⭐ {currentMovie.voteAverage?.toFixed(1)}</div>
-                <div className={styles.badge}>{currentMovie.releaseDate?.split('-')[0]}</div>
-                {currentMovie.mediaType === 'tv' && <div className={styles.badge}>TV Series</div>}
-                
-                {/* Provider Icons */}
-                {currentMovie.providers && currentMovie.providers.length > 0 && (
-                    <div className={styles.providers}>
-                        {currentMovie.providers.slice(0, 4).map((provider: any) => (
-                            <div key={provider.provider_id} className={styles.providerIcon} title={provider.provider_name}>
-                                {provider.logo_path ? (
-                                    <Image 
-                                        src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}
-                                        alt={provider.provider_name}
-                                        width={28}
-                                        height={28}
-                                    />
-                                ) : (
-                                    <span>{provider.provider_name.charAt(0)}</span>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-            
-            <p className={styles.overview}>{currentMovie.overview}</p>
-
-            <div className={styles.actionBar}>
-                <div className={styles.leftActions}>
-                    <button className={styles.textBtn} onClick={() => setShowInfo(currentMovie)}>
-                        <Info size={18} /> Details
-                    </button>
-                </div>
-
-                <div className={styles.voteActions}>
-                    <button className={`${styles.voteBtn} ${styles.passBtn}`} onClick={() => handleVote("dislike")}>
-                        <X size={32} />
-                    </button>
-                    <button className={`${styles.voteBtn} ${styles.likeBtn}`} onClick={() => handleVote("like")}>
-                        <Heart size={32} fill="currentColor" />
-                    </button>
-                </div>
-            </div>
-        </div>
-      </div>
-
       {/* Info Modal */}
       {showInfo && (
         <div className={styles.historyOverlay}>
@@ -256,6 +205,26 @@ export function MatchPointSwipe({ movies, onVote, history = [], matches = [], on
             <div style={{color: 'white', paddingBottom: 40, maxWidth: 800, margin: '0 auto'}}>
                 <p style={{fontSize: '1.2rem', lineHeight: 1.6, marginBottom: 30}}>{showInfo.overview}</p>
                 
+                {/* Providers */}
+                {showInfo.providers && showInfo.providers.length > 0 && (
+                    <div style={{marginBottom: 30}}>
+                        <h3 style={{marginBottom: 15, color: '#aaa', textTransform: 'uppercase', letterSpacing: 1}}>Streaming In India</h3>
+                        <div style={{display: 'flex', gap: 12}}>
+                            {showInfo.providers.map((p: any) => (
+                                <div key={p.provider_id} title={p.provider_name}>
+                                    <Image 
+                                        src={`https://image.tmdb.org/t/p/original${p.logo_path}`}
+                                        alt={p.provider_name}
+                                        width={48}
+                                        height={48}
+                                        style={{borderRadius: 8}}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {showInfo.credits?.cast && (
                     <>
                         <h3 style={{marginBottom: 15, color: '#aaa', textTransform: 'uppercase', letterSpacing: 1}}>Cast</h3>

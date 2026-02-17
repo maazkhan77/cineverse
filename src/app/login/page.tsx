@@ -103,14 +103,41 @@ function LoginPageContent() {
     }
   };
 
-  const handleGuestLogin = () => {
-    setEmail("guest@cineverse.com");
-    setPassword("GuestUser123!");
-    // Small delay to allow state update before auto-submission
-    setTimeout(() => {
-      const form = document.querySelector('form');
-      if (form) form.requestSubmit();
-    }, 100);
+  const handleGuestLogin = async () => {
+    setIsSubmitting(true);
+    setError(null);
+    const guestEmail = "guest_v2@canima.com";
+    const guestPassword = "GuestUser123!";
+    const guestName = "Guest Viewer";
+
+    try {
+      // Try to sign in first
+      const formData = new FormData();
+      formData.set("email", guestEmail);
+      formData.set("password", guestPassword);
+      formData.set("flow", "signIn");
+      
+      await signIn("password", formData);
+      router.push(redirectTo);
+    } catch (signInErr) {
+      console.log("Guest login failed, trying signup...", signInErr);
+      // If sign in fails, try to sign up
+      try {
+        const formData = new FormData();
+        formData.set("email", guestEmail);
+        formData.set("password", guestPassword);
+        formData.set("flow", "signUp");
+        formData.set("name", guestName);
+        
+        await signIn("password", formData);
+        router.push(redirectTo);
+      } catch (signUpErr) {
+        console.error("Guest signup also failed:", signUpErr);
+        setError("Guest login unavailable. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isLoading) {
@@ -229,7 +256,7 @@ function LoginPageContent() {
             animate={{ scale: 1 }}
             transition={{ duration: 0.3 }}
           >
-            CINEVERSE
+            CANIMA
           </motion.div>
           
           <h2 className={styles.authTitle}>

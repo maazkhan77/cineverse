@@ -138,6 +138,7 @@
   color: white;
 }
 
+
 .logo {
   font-family: var(--font-display);
   font-size: var(--text-2xl);
@@ -146,6 +147,7 @@
   margin-bottom: var(--space-2);
   letter-spacing: -0.02em;
 }
+
 
 .authTitle {
   font-family: var(--font-display);

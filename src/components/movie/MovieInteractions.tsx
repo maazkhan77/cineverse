@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useQuery, useMutation, useConvexAuth } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { RatingModal } from "@/components/ui";
+import { RatingModal, TrailerModal } from "@/components/ui";
 import { toast } from "sonner";
 import styles from "../../app/movie/[id]/page.module.css";
 import { motion } from "framer-motion";
@@ -15,6 +15,7 @@ interface MovieInteractionsProps {
   posterPath: string | null;
   voteAverage: number;
   trailerKey?: string;
+  mediaType?: "movie" | "tv";
 }
 
 export function MovieInteractions({ 
@@ -22,7 +23,8 @@ export function MovieInteractions({
   movieTitle, 
   posterPath, 
   voteAverage,
-  trailerKey 
+  trailerKey,
+  mediaType = "movie"
 }: MovieInteractionsProps) {
   const router = useRouter();
   const { isAuthenticated } = useConvexAuth();
@@ -33,13 +35,13 @@ export function MovieInteractions({
   const [isWatchlistLoading, setIsWatchlistLoading] = useState(false);
 
   const isInWatchlist = useQuery(api.watchlist.isInWatchlist, { tmdbId: movieId });
-  const userRating = useQuery(api.ratings.getUserRating, { tmdbId: movieId, mediaType: "movie" });
+  const userRating = useQuery(api.ratings.getUserRating, { tmdbId: movieId, mediaType });
   const addToWatchlist = useMutation(api.watchlist.add);
   const removeFromWatchlist = useMutation(api.watchlist.remove);
 
   const handleWatchlistToggle = async () => {
     if (!isAuthenticated) {
-      router.push(`/login?redirect=/movie/${movieId}`);
+      router.push(`/login?redirect=/${mediaType}/${movieId}`);
       return;
     }
 
@@ -51,10 +53,10 @@ export function MovieInteractions({
       } else {
         await addToWatchlist({
           tmdbId: movieId,
-          mediaType: "movie",
+          mediaType,
           title: movieTitle,
           posterPath: posterPath || undefined,
-          voteAverage: voteAverage,
+          voteAverage,
         });
         toast.success(`${movieTitle} added to watchlist!`);
       }
@@ -67,7 +69,7 @@ export function MovieInteractions({
   };
 
   const handleShare = async () => {
-    const url = `${window.location.origin}/movie/${movieId}`;
+    const url = `${window.location.origin}/${mediaType}/${movieId}`;
     if (navigator.share) {
       try {
         await navigator.share({ title: movieTitle, url });
@@ -96,6 +98,7 @@ export function MovieInteractions({
       >
         {trailerKey && (
             <button
+              type="button"
               className={styles.playButton}
               onClick={() => setShowTrailer(true)}
             >
@@ -106,6 +109,7 @@ export function MovieInteractions({
             </button>
         )}
           <button 
+            type="button"
             className={`${styles.secondaryButton} ${isInWatchlist ? styles.inWatchlist : ""}`}
             onClick={handleWatchlistToggle}
             disabled={isWatchlistLoading}
@@ -122,15 +126,16 @@ export function MovieInteractions({
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
                 </svg>
-                Add to Watchlist
+                Watchlist
               </>
             )}
           </button>
           <button 
+            type="button"
             className={`${styles.secondaryButton} ${userRating ? styles.activeRating : ""}`}
             onClick={() => {
               if (!isAuthenticated) {
-                router.push(`/login?redirect=/movie/${movieId}`);
+                router.push(`/login?redirect=/${mediaType}/${movieId}`);
               } else {
                 setIsRatingModalOpen(true);
               }
@@ -139,9 +144,10 @@ export function MovieInteractions({
             <svg width="20" height="20" viewBox="0 0 24 24" fill={userRating ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
             </svg>
-            {userRating ? `Rated ${userRating.rating}/10` : "Rate This"}
+            {userRating ? `Rated ${userRating.rating}` : "Rate"}
           </button>
           <button 
+            type="button"
             className={styles.secondaryButton}
             onClick={handleShare}
           >
@@ -156,24 +162,12 @@ export function MovieInteractions({
           </button>
       </motion.div>
 
-      {/* Trailer Modal */}
+      {/* Trailer Modal - Portal to Body for Layout Safety */}
       {showTrailer && trailerKey && (
-        <div className={styles.trailerModal} onClick={() => setShowTrailer(false)}>
-          <div className={styles.trailerContent} onClick={(e) => e.stopPropagation()}>
-            <button
-              className={styles.closeTrailer}
-              onClick={() => setShowTrailer(false)}
-            >
-              ✕
-            </button>
-            <iframe
-              src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1`}
-              className={styles.trailerIframe}
-              allow="autoplay; encrypted-media; fullscreen"
-              allowFullScreen
-            />
-          </div>
-        </div>
+        <TrailerModal 
+            trailerKey={trailerKey} 
+            onClose={() => setShowTrailer(false)} 
+        />
       )}
 
       {/* Rating Modal */}
@@ -181,7 +175,7 @@ export function MovieInteractions({
         isOpen={isRatingModalOpen}
         onClose={() => setIsRatingModalOpen(false)}
         tmdbId={movieId}
-        mediaType="movie"
+        mediaType={mediaType}
         title={movieTitle}
         initialRating={userRating?.rating}
         initialReview={userRating?.review}

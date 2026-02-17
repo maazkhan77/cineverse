@@ -1,0 +1,57 @@
+.trailerModal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000; /* Higher z-index to stay above everything */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 15, 0.7); /* Darker, semi-transparent base */
+  backdrop-filter: blur(16px) saturate(180%); /* Strong glassmorphism */
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: var(--space-6);
+  gap: var(--space-6);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; backdrop-filter: blur(0px); }
+  to { opacity: 1; backdrop-filter: blur(16px) saturate(180%); }
+}
+
+.trailerContent {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    0 0 100px rgba(var(--color-primary-rgb), 0.1); /* Subtle glow */
+  transform-origin: center;
+  animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Close button container outside the iframe */
+.closeContainer {
+  display: flex;
+  justify-content: flex-end; /* Align to right */
+  width: 100%;
+  max-width: 1100px;
+  position: relative;
+  z-index: 10;
+}
+
+.trailerIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}

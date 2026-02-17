@@ -1,6 +1,7 @@
 "use client";
 
-import { MovieCard, FilterDrawer, FilterState } from "@/components/ui";
+import { MovieCard } from "@/components/ui/MovieCard";
+import { FilterDrawer, type FilterState } from "@/components/ui/FilterDrawer";
 import { useState, useCallback, useEffect, useRef, Suspense } from "react";
 import { useQuery, useMutation, useAction } from "convex/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -31,7 +32,7 @@ interface TMDBResponse {
 }
 
 type FilterType = "all" | "movie" | "tv";
-type SearchMode = "regular" | "ai" | "matchpoint";
+type SearchMode = "regular" | "ai" | "canimasync";
 
 // Wrapper component with Suspense for useSearchParams
 export default function SearchPage() {
@@ -231,7 +232,7 @@ function SearchPageContent() {
       }
 
       if (data) {
-        let filteredResults = data.results.filter((r) => r.media_type !== "person");
+        let filteredResults = (data.results || []).filter((r) => r.media_type !== "person");
         
         // Ensure media_type is set for Discover results (API sometimes omits it on specific endpoints)
         // If discovery was used, we know the type.
@@ -372,13 +373,13 @@ function SearchPageContent() {
         >
           <h1 className={styles.heroTitle}>
             {searchMode === "ai" ? "Ask AI for Recommendations" : 
-             searchMode === "matchpoint" ? "Mix & Match" :
+             searchMode === "canimasync" ? "Mix & Match" :
              "Search Movies & TV Shows"}
           </h1>
           <p className={styles.heroSubtitle}>
             {searchMode === "ai" 
               ? "Describe what you're in the mood for and get personalized suggestions"
-              : searchMode === "matchpoint"
+              : searchMode === "canimasync"
               ? "Select a genre for you and one for your partner to find the perfect middle ground."
               : "Find your next favorite movie or show"
             }
@@ -410,19 +411,19 @@ function SearchPageContent() {
                   )
                 },
                 {
-                  value: "matchpoint",
+                  value: "canimasync",
                   label: (
                     <>
                       <span className={styles.aiIcon}>🤝</span>
-                      MatchPoint
+                      CanimaSync
                     </>
                   )
                 }
               ]}
               value={searchMode}
               onChange={(val) => {
-                if (val === "matchpoint") {
-                  router.push("/matchpoint");
+                if (val === "canimasync") {
+                  router.push("/canimasync");
                 } else {
                   setSearchMode(val as any);
                 }
@@ -431,8 +432,8 @@ function SearchPageContent() {
             />
           </div>
 
-          {/* Search Input - Hidden in MatchPoint mode */}
-          {searchMode !== "matchpoint" && (
+          {/* Search Input - Hidden in CanimaSync mode */}
+          {searchMode !== "canimasync" && (
             <div className={styles.searchBox}>
               <div className={styles.searchInputWrapper}>
                 <svg className={styles.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -534,8 +535,8 @@ function SearchPageContent() {
             </div>
           )}
 
-          {/* MatchPoint Component */}
-          {/* MatchPoint Component Removed - Moved to /matchpoint */}
+          {/* CanimaSync Component */}
+          {/* CanimaSync Component Removed - Moved to /canimasync */}
 
           {/* Filter Chips - Only for regular search */}
           {searchMode === "regular" && (
@@ -565,7 +566,7 @@ function SearchPageContent() {
           {error && <div className={styles.error}>{error}</div>}
 
           {/* Trending Section - Show when no search performed */}
-          {!hasSearched && !isDiscoveryMode() && trending.length > 0 && searchMode !== "matchpoint" && (
+          {!hasSearched && !isDiscoveryMode() && trending.length > 0 && searchMode !== "canimasync" && (
             <motion.div 
               className={styles.trendingSection}
               initial={{ opacity: 0 }}
@@ -574,7 +575,7 @@ function SearchPageContent() {
             >
               <h2 className={styles.sectionTitle}>🔥 Trending This Week</h2>
               <div className={styles.trendingScroll}>
-                {trending.map((item) => (
+                {(trending || []).map((item) => (
                   <div 
                     key={item.id} 
                     className={styles.trendingCard}

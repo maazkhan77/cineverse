@@ -93,7 +93,7 @@ export async function getMovieDetails(id: string) {
         cast: res.credits?.cast?.slice(0, 12) || [],
         similar: res.similar?.results?.slice(0, 10) || [],
         trailer: res.videos?.results?.find(
-            (v: any) => v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
+            (v: any) => v.site === "YouTube" && v.type === "Trailer"
         )
     };
 }
@@ -108,7 +108,7 @@ export async function getTVDetails(id: string) {
         cast: res.credits?.cast?.slice(0, 12) || [],
         similar: res.similar?.results?.slice(0, 10) || [],
         trailer: res.videos?.results?.find(
-            (v: any) => v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
+            (v: any) => v.site === "YouTube" && v.type === "Trailer"
         )
     };
 }

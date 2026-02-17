@@ -11,7 +11,8 @@ export function useTrendingMovies() {
   const getTrending = useAction(api.tmdb.getTrending);
   return useQuery<TMDBResponse>({
     queryKey: ["trending", "movies"],
-    queryFn: () => getTrending({ timeWindow: "week" }),
+    queryFn: () => getTrending({ timeWindow: "week", includeTrailers: true }),
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
 
@@ -20,6 +21,7 @@ export function useTrendingTV() {
   return useQuery<TMDBResponse>({
     queryKey: ["trending", "tv"],
     queryFn: () => getTrending({ timeWindow: "day" }),
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -28,6 +30,7 @@ export function useNowPlaying() {
   return useQuery<TMDBResponse>({
     queryKey: ["movies", "nowPlaying"],
     queryFn: () => getNowPlaying({ page: 1 }),
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -36,6 +39,7 @@ export function useUpcoming() {
   return useQuery<TMDBResponse>({
     queryKey: ["movies", "upcoming"],
     queryFn: () => getUpcoming({ page: 1 }),
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -44,6 +48,7 @@ export function useTopRatedMovies() {
   return useQuery<TMDBResponse>({
     queryKey: ["movies", "topRated"],
     queryFn: () => getTopRated({ mediaType: "movie", page: 1 }),
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -52,6 +57,7 @@ export function useTopRatedTV() {
   return useQuery<TMDBResponse>({
     queryKey: ["tv", "topRated"],
     queryFn: () => getTopRated({ mediaType: "tv", page: 1 }),
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -60,6 +66,7 @@ export function useAiringToday() {
   return useQuery<TMDBResponse>({
     queryKey: ["tv", "airingToday"],
     queryFn: () => getAiringToday({ page: 1 }),
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -68,6 +75,7 @@ export function useOnTheAir() {
   return useQuery<TMDBResponse>({
     queryKey: ["tv", "onTheAir"],
     queryFn: () => getOnTheAir({ page: 1 }),
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -100,6 +108,7 @@ export function useDiscoverMoviesInfinite(filters: DiscoverFilters = {}) {
       }
       return undefined;
     },
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -122,6 +131,7 @@ export function useDiscoverSeriesInfinite(filters: DiscoverFilters = {}) {
       }
       return undefined;
     },
+    staleTime: 5 * 60 * 1000,
   });
 }
 
