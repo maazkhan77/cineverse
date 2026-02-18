@@ -24,7 +24,8 @@ export interface TMDBResponse {
 
 async function tmdbFetch<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
   if (!TMDB_API_KEY) {
-    throw new Error("TMDB_API_KEY is not set");
+    console.error(`[TMDB] TMDB_API_KEY is not set! Failed to fetch: ${endpoint}`);
+    throw new Error("TMDB_API_KEY is not set. Please configure it in your environment variables.");
   }
 
   const url = new URL(`${TMDB_BASE_URL}${endpoint}`);

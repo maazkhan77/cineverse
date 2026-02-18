@@ -1,7 +1,7 @@
 "use client";
 
 import useEmblaCarousel from "embla-carousel-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import styles from "./Carousel.module.css";
 
@@ -20,6 +20,16 @@ export function Carousel({ title, children, className }: CarouselProps) {
 
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+
+  // Combine refs: emblaRef (callback ref) + our own ref for wheel events
+  const setRefs = useCallback(
+    (node: HTMLDivElement | null) => {
+      viewportRef.current = node;
+      emblaRef(node);
+    },
+    [emblaRef]
+  );
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -46,6 +56,29 @@ export function Carousel({ title, children, className }: CarouselProps) {
     };
   }, [emblaApi, onSelect]);
 
+  // Mouse wheel horizontal scrolling
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport || !emblaApi) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      // Use deltaY (vertical scroll) to scroll horizontally
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (delta === 0) return;
+
+      e.preventDefault();
+      const scrollContainer = emblaApi.rootNode();
+      if (scrollContainer) {
+        emblaApi.scrollTo(
+          emblaApi.selectedScrollSnap() + (delta > 0 ? 1 : -1)
+        );
+      }
+    };
+
+    viewport.addEventListener("wheel", handleWheel, { passive: false });
+    return () => viewport.removeEventListener("wheel", handleWheel);
+  }, [emblaApi]);
+
   return (
     <section className={`${styles.section} ${className || ""}`}>
       <div className={styles.header}>
@@ -70,7 +103,7 @@ export function Carousel({ title, children, className }: CarouselProps) {
         </div>
       </div>
 
-      <div className={styles.viewport} ref={emblaRef}>
+      <div className={styles.viewport} ref={setRefs}>
         <div className={styles.container}>
           {children}
         </div>

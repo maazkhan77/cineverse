@@ -8,11 +8,22 @@ import { CanimaSyncWaitingRoom } from "@/components/canimasync/CanimaSyncWaiting
 import { CanimaSyncSwipe } from "@/components/canimasync/CanimaSyncSwipe";
 import { CanimaSyncResults } from "@/components/canimasync/CanimaSyncResults";
 import { Id } from "../../../convex/_generated/dataModel";
+import { useRouter } from "next/navigation";
 
 export default function CanimaSyncPage() {
   const [roomId, setRoomId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [isHost, setIsHost] = useState(false);
+  const router = useRouter();
+
+  const handleExit = () => {
+    localStorage.removeItem("canima_roomId");
+    localStorage.removeItem("canima_userId");
+    localStorage.removeItem("canima_isHost");
+    setRoomId(null);
+    setUserId(null);
+    setIsHost(false);
+  };
   
   // Polling room state
   // In Convex, queries update automatically!
@@ -141,6 +152,7 @@ export default function CanimaSyncPage() {
         }))}
         isHost={isHost}
         onStart={handleStart}
+        onExit={handleExit}
       />
     );
   }
@@ -166,6 +178,7 @@ export default function CanimaSyncPage() {
               history={sessionLikes}
               matches={roomState.matches || []}
               onFinish={handleFinish}
+              onExit={handleExit}
               votes={roomState.votes || []}
               participants={roomState.participants || []}
             />

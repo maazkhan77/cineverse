@@ -4,10 +4,11 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./CanimaSyncSwipe.module.css";
 import Image from "next/image";
-import { X, Heart, Info, Play, History, Volume2, VolumeX, MonitorPlay } from "lucide-react";
+import { X, Heart, Info, Play, History, Volume2, VolumeX, MonitorPlay, LogOut } from "lucide-react";
 import dynamic from "next/dynamic";
 import { CurtainTransition } from "./CurtainTransition";
 import { CanimaSyncCard } from "./CanimaSyncCard";
+import { CanimaSyncTutorial } from "./CanimaSyncTutorial";
 
 // Fix for ReactPlayer types with dynamic import
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false }) as any;
@@ -34,6 +35,7 @@ interface CanimaSyncSwipeProps {
   history?: any[];
   matches?: any[];
   onFinish?: () => void;
+  onExit?: () => void;
   votes?: any[];
   participants?: any[];
 }
@@ -44,17 +46,27 @@ export function CanimaSyncSwipe({
   history = [], 
   matches = [], 
   onFinish,
+  onExit,
   votes = [],
   participants = []
 }: CanimaSyncSwipeProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showCurtain, setShowCurtain] = useState(false);
+  const [movieReady, setMovieReady] = useState(true);
   const [muted, setMuted] = useState(true);
   
   // Modals
   const [showInfo, setShowInfo] = useState<Card | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [showMatches, setShowMatches] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  // Show tutorial on first visit
+  useEffect(() => {
+    if (!localStorage.getItem("canima_tutorialSeen")) {
+      setShowTutorial(true);
+    }
+  }, []);
 
   // Scroll to top on index change? Not needed for swipe container usually.
   
@@ -65,16 +77,21 @@ export function CanimaSyncSwipe({
     // 1. Trigger Curtain Close
     setShowCurtain(true);
 
-    // 2. Wait for curtain to cover (approx 600ms)
+    // 2. Wait for curtain to fully cover the screen
     setTimeout(() => {
-        // 3. Commit Vote & Change Movie
+        // 3. Commit Vote & Change Movie while curtain is closed
         onVote(currentMovie.tmdbId, vote, currentMovie);
+        setMovieReady(false);
         setCurrentIndex(prev => prev + 1);
         
-        // 5. Open Curtain
+        // 4. Give the new movie a moment to render/load behind the curtain
         setTimeout(() => {
-            setShowCurtain(false);
-        }, 400); // Short delay before opening
+            setMovieReady(true);
+            // 5. Open Curtain only after new movie is ready
+            setTimeout(() => {
+                setShowCurtain(false);
+            }, 200);
+        }, 600);
     }, 800);
   };
 
@@ -164,6 +181,11 @@ export function CanimaSyncSwipe({
     <div className={styles.container}>
       <CurtainTransition show={showCurtain} />
 
+      {/* Tutorial Overlay */}
+      {showTutorial && (
+        <CanimaSyncTutorial onComplete={() => setShowTutorial(false)} />
+      )}
+
       {/* Main Card */}
       <CanimaSyncCard 
         movie={currentMovie}
@@ -175,8 +197,13 @@ export function CanimaSyncSwipe({
         votingStats={votingStats}
       />
 
-      {/* Top Actions (History/Matches only - Sound moved to Card) */}
+      {/* Top Actions (Exit/History/Matches) */}
       <div className={styles.topActions}>
+        {onExit && (
+          <button className={styles.iconBtn} onClick={onExit} title="Exit CanimaSync" style={{borderColor: '#ff6b6b', color: '#ff6b6b'}}>
+            <LogOut size={22} />
+          </button>
+        )}
         <button className={styles.iconBtn} onClick={() => setShowHistory(true)}>
           <History size={24} />
           {history.length > 0 && <span style={{

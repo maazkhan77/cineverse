@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Button3D } from "@/components/ui/Button3D/Button3D";
+import { LogOut } from "lucide-react";
 import styles from "./CanimaSyncWaitingRoom.module.css";
 import { toast } from "sonner";
 
@@ -14,9 +15,10 @@ interface CanimaSyncWaitingRoomProps {
   participants: Participant[];
   isHost: boolean;
   onStart: () => void;
+  onExit?: () => void;
 }
 
-export function CanimaSyncWaitingRoom({ roomId, participants, isHost, onStart }: CanimaSyncWaitingRoomProps) {
+export function CanimaSyncWaitingRoom({ roomId, participants, isHost, onStart, onExit }: CanimaSyncWaitingRoomProps) {
   
   const copyCode = () => {
     navigator.clipboard.writeText(roomId);
@@ -93,6 +95,21 @@ export function CanimaSyncWaitingRoom({ roomId, participants, isHost, onStart }:
               <div className={styles.spinner} />
               <span>Waiting for host to start...</span>
             </div>
+          )}
+          {onExit && (
+            <button 
+              onClick={onExit}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                padding: '10px 20px', background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.15)', borderRadius: 12,
+                color: '#ff6b6b', cursor: 'pointer', fontSize: '0.9rem',
+                fontWeight: 500, marginTop: 12, transition: 'all 0.2s'
+              }}
+            >
+              <LogOut size={16} />
+              Leave Room
+            </button>
           )}
         </div>
 

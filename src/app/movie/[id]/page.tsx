@@ -26,7 +26,7 @@ const formatRuntime = (mins: number) => {
 export default async function MovieDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const data = await getMovieDetails(id).catch(e => {
-     console.error("Failed to fetch movie data", e);
+     console.error(`Failed to fetch movie data for ID: ${id}`, e);
      return null;
   });
 

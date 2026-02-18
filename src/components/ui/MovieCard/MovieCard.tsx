@@ -45,6 +45,19 @@ export function MovieCard({
     };
   }, []);
 
+  // Auto-close overlay on scroll
+  useEffect(() => {
+    if (!showOverlay) return;
+    const handleScroll = () => {
+      setShowOverlay(false);
+      setRect(null);
+      if (timerRef.current) clearTimeout(timerRef.current);
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true, capture: true });
+    return () => window.removeEventListener("scroll", handleScroll, true);
+  }, [showOverlay]);
+
   const handleMouseEnter = () => {
     setIsHovered(true);
     // Clear any pending close timer (if moving quickly between trigger and overlay)

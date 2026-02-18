@@ -7,6 +7,7 @@ import { QueryProvider } from "@/providers/QueryProvider";
 import { AmbientBackground } from "@/components/ui/AmbientBackground/AmbientBackground";
 import { Navbar } from "@/components/ui/Navbar/Navbar";
 import { ScrollToTop } from "@/components/ui/ScrollToTop/ScrollToTop";
+import { Footer } from "@/components/ui/Footer/Footer";
 import { FloatingDock } from "@/components/ui/FloatingDock/FloatingDock";
 import { Toaster } from "sonner";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary/ErrorBoundary";
@@ -53,6 +54,7 @@ export default function RootLayout({
                     {children}
                   </ErrorBoundary>
                 </div>
+                <Footer />
                 <FloatingDock />
                 <Toaster 
                   position="bottom-right" 

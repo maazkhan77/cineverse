@@ -226,7 +226,7 @@
 /* Top Right Actions */
 .topActions {
   position: absolute;
-  top: 24px;
+  top: 90px;
   right: 24px;
   z-index: 50;
   display: flex;
