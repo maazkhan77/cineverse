@@ -64,7 +64,7 @@ export function Carousel({ title, children, className }: CarouselProps) {
     const handleWheel = (e: WheelEvent) => {
       // Only intercept horizontal wheel gestures (e.g., trackpad horizontal swipe).
       // Let vertical scroll pass through to scroll the page normally.
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 5) {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 15) {
         e.preventDefault();
         emblaApi.scrollTo(
           emblaApi.selectedScrollSnap() + (e.deltaX > 0 ? 1 : -1)

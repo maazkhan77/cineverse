@@ -50,6 +50,7 @@
 .viewport {
   overflow: hidden;
   padding: 0 var(--content-padding, 24px);
+  overscroll-behavior-x: contain;
 }
 
 .container {

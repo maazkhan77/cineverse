@@ -31,8 +31,62 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Canima - Discover Movies & TV Shows",
-  description: "AI-powered movie and TV show discovery platform",
+  title: {
+    default: "Cineverse - Discover Your Next Favorite Movie or TV Show",
+    template: "%s | Cineverse",
+  },
+  description: "Your ultimate destination for discovering movies and TV series. Explore trending titles, watch trailers, and find hidden gems with AI-powered recommendations.",
+  keywords: ["movies", "tv shows", "streaming", "recommendations", "cinema", "entertainment", "trailers", "reviews", "tmdb", "film"],
+  authors: [{ name: "Cineverse Team" }],
+  creator: "Cineverse",
+  publisher: "Cineverse",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL("https://cineverse.app"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Cineverse - Cinematic Discovery Reimagined",
+    description: "Experience movies and TV shows like never before. AI-powered search, stunning visuals, and a community of film lovers.",
+    url: "https://cineverse.app",
+    siteName: "Cineverse",
+    images: [
+      {
+        url: "/icon.png",
+        width: 1024,
+        height: 1024,
+        alt: "Cineverse Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cineverse - Discover Movies & TV Shows",
+    description: "Your next favorite story is waiting. Search, discover, and track movies and TV shows with Cineverse.",
+    images: ["/icon.png"],
+    creator: "@cineverse",
+  },
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({

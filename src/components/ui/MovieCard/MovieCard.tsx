@@ -70,7 +70,7 @@ export function MovieCard({
             setRect(cardRef.current.getBoundingClientRect());
             setShowOverlay(true);
         }
-        }, 750); // Increased to 750ms to prevent accidental triggers
+        }, 1250); // Increased to 1.25s to prevent accidental triggers
     }
   };
 

@@ -13,6 +13,10 @@ export function Footer() {
         >
           Maaz
         </a>
+        {" "}and{" "}
+        <span className={styles.link}>
+          Antigravity
+        </span>
       </span>
     </footer>
   );
