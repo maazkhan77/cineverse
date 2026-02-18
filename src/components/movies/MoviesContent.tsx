@@ -14,6 +14,7 @@ import {
   SheetFooter,
 } from "@/components/ui/Sheet/Sheet";
 import { GenreFilter } from "@/components/ui/GenreFilter";
+import { useUIStore } from "@/stores/uiStore";
 import styles from "@/app/movies/page.module.css";
 
 interface FilterState {
@@ -37,11 +38,18 @@ export default function MoviesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const selectedRegions = useUIStore((s) => s.selectedRegions);
   const [filters, setFilters] = useState<FilterState>({
     minRating: 0,
     sortBy: "popularity.desc",
     withGenres: "",
   });
+
+  // Sync global region store into filters
+  const activeFilters = useMemo(() => ({
+    ...filters,
+    region: selectedRegions[0] || "IN",
+  }), [filters, selectedRegions]);
 
   // Sync URL query params (from navbar genre links) into filter state
   useEffect(() => {
@@ -66,7 +74,7 @@ export default function MoviesContent() {
     isLoading,
     isError,
     error,
-  } = useDiscoverMoviesInfinite(filters);
+  } = useDiscoverMoviesInfinite(activeFilters);
 
   // Flatten pages into a single array
   const movies = useMemo(() => {
@@ -202,6 +210,8 @@ export default function MoviesContent() {
             </div>
           )}
         </section>
+
+
       </main>
 
       {/* Filter Sheet (Radix-based, accessible) */}

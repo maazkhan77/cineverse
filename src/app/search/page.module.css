@@ -16,7 +16,7 @@
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 800;
   margin-bottom: var(--space-3);
-  background: linear-gradient(135deg, white 0%, rgba(255, 255, 255, 0.7) 100%);
+  background: linear-gradient(135deg, var(--color-text) 0%, var(--color-text-secondary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -31,8 +31,8 @@
 /* ============ MODE TOGGLE ============ */
 .modeToggle {
   display: inline-flex;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-glass-hover);
+  border: 1px solid var(--color-glass-border);
   border-radius: 50px;
   padding: 4px;
   margin-bottom: 24px;
@@ -47,7 +47,7 @@
   background: transparent !important;
   border: none !important;
   border-radius: 50px !important;
-  color: rgba(255, 255, 255, 0.6) !important;
+  color: var(--color-text-muted) !important;
   font-size: 14px !important;
   font-weight: 500 !important;
   cursor: pointer !important;
@@ -62,11 +62,11 @@
 }
 
 .modeButton:hover {
-  color: white;
+  color: var(--color-text);
 }
 
 .modeButton.active {
-  background: #e50914 !important;
+  background: var(--color-accent) !important;
   color: white !important;
 }
 
@@ -101,10 +101,10 @@
   height: 56px !important;
   min-height: 56px !important;
   padding: 16px 120px 16px 52px !important;
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 2px solid rgba(255, 255, 255, 0.1) !important;
+  background: var(--color-glass-hover) !important;
+  border: 2px solid var(--color-glass-border) !important;
   border-radius: 16px !important;
-  color: white !important;
+  color: var(--color-text) !important;
   font-size: 18px !important;
   transition: all 0.2s ease !important;
   box-sizing: border-box !important;
@@ -113,8 +113,8 @@
 .searchInput:focus {
   outline: none;
   border-color: var(--color-accent);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.15);
+  background: var(--color-glass-hover-strong);
+  box-shadow: 0 0 0 4px var(--color-accent-subtle);
 }
 
 .searchInput::placeholder {
@@ -128,7 +128,7 @@
   transform: translateY(-50%);
   padding: 12px 20px;
   height: 44px;
-  background: #e50914;
+  background: var(--color-accent);
   border: none;
   border-radius: 12px;
   color: white;
@@ -167,12 +167,12 @@
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  background: rgba(30, 30, 40, 0.98);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-glass-border);
   border-radius: var(--radius-lg);
   padding: var(--space-2);
   z-index: 100;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(20px);
 }
 
@@ -210,7 +210,7 @@
   background: transparent;
   border: none;
   border-radius: var(--radius-md);
-  color: white;
+  color: var(--color-text);
   font-size: var(--text-base);
   text-align: left;
   cursor: pointer;
@@ -218,7 +218,7 @@
 }
 
 .suggestionItem:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--color-glass-hover);
 }
 
 .suggestionIcon {
@@ -237,7 +237,7 @@
 .filterChip {
   padding: var(--space-2) var(--space-4);
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--color-glass-border);
   border-radius: var(--radius-full);
   color: var(--color-text-muted);
   font-size: var(--text-sm);
@@ -247,13 +247,13 @@
 }
 
 .filterChip:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  color: white;
+  border-color: var(--color-glass-border-hover);
+  color: var(--color-text);
 }
 
 .filterChip.active {
-  background: white;
-  border-color: white;
+  background: var(--color-text);
+  border-color: var(--color-text);
   color: var(--color-bg);
 }
 
@@ -342,7 +342,7 @@
   display: block;
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
-  color: white;
+  color: var(--color-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -410,7 +410,7 @@
 .aiResultTitle {
   font-size: var(--text-lg);
   font-weight: var(--font-semibold);
-  color: white;
+  color: var(--color-text);
 }
 
 .aiResultYear {
@@ -471,7 +471,7 @@
 .spinner {
   width: 24px;
   height: 24px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid var(--color-spinner-track);
   border-top-color: var(--color-accent);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;

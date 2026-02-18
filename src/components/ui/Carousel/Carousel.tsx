@@ -62,17 +62,15 @@ export function Carousel({ title, children, className }: CarouselProps) {
     if (!viewport || !emblaApi) return;
 
     const handleWheel = (e: WheelEvent) => {
-      // Use deltaY (vertical scroll) to scroll horizontally
-      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      if (delta === 0) return;
-
-      e.preventDefault();
-      const scrollContainer = emblaApi.rootNode();
-      if (scrollContainer) {
+      // Only intercept horizontal wheel gestures (e.g., trackpad horizontal swipe).
+      // Let vertical scroll pass through to scroll the page normally.
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 5) {
+        e.preventDefault();
         emblaApi.scrollTo(
-          emblaApi.selectedScrollSnap() + (delta > 0 ? 1 : -1)
+          emblaApi.selectedScrollSnap() + (e.deltaX > 0 ? 1 : -1)
         );
       }
+      // Vertical scroll (deltaY dominant) is NOT intercepted — page scrolls normally.
     };
 
     viewport.addEventListener("wheel", handleWheel, { passive: false });

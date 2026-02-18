@@ -9,6 +9,7 @@ import { Navbar } from "@/components/ui/Navbar/Navbar";
 import { ScrollToTop } from "@/components/ui/ScrollToTop/ScrollToTop";
 import { Footer } from "@/components/ui/Footer/Footer";
 import { FloatingDock } from "@/components/ui/FloatingDock/FloatingDock";
+import { RegionSelector } from "@/components/ui/RegionSelector/RegionSelector";
 import { Toaster } from "sonner";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary/ErrorBoundary";
 import { FingerprintProvider } from "@/providers/FingerprintProvider";
@@ -55,12 +56,12 @@ export default function RootLayout({
                   </ErrorBoundary>
                 </div>
                 <Footer />
+                <RegionSelector />
                 <FloatingDock />
                 <Toaster 
                   position="bottom-right" 
                   richColors 
                   closeButton 
-                  theme="dark"
                 />
               </ThemeProvider>
             </ConvexClientProvider>

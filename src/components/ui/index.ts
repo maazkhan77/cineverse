@@ -29,3 +29,4 @@ export * from "./Carousel/Carousel";
 
 
 export { TrailerModal } from "./TrailerModal";
+export * from "./TMDBBlockedFallback/TMDBBlockedFallback";

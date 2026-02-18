@@ -11,7 +11,7 @@
   height: 350px;
   width: 100%;
   position: relative;
-  background: linear-gradient(to bottom, #1a1a2e, #16213e);
+  background: linear-gradient(to bottom, var(--color-bg-secondary), var(--color-bg-tertiary));
   overflow: hidden;
 }
 
@@ -42,14 +42,14 @@
 }
 
 .profileCard {
-  background: rgba(20, 20, 30, 0.6);
+  background: var(--color-surface-elevated);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-border);
   border-radius: 24px;
   padding: var(--space-8);
   box-shadow: 
     0 20px 40px rgba(0,0,0,0.4),
-    inset 0 1px 0 rgba(255,255,255,0.1);
+    inset 0 1px 0 var(--color-glass-border);
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
@@ -107,7 +107,7 @@
   font-family: var(--font-display);
   font-size: 2.5rem;
   font-weight: 800;
-  color: white;
+  color: var(--color-text);
   margin-bottom: var(--space-1);
   letter-spacing: -0.02em;
   /* Fix clipping */
@@ -115,7 +115,7 @@
 }
 
 .email {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-muted);
   font-size: var(--text-sm);
   display: flex;
   align-items: center;
@@ -143,7 +143,7 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-muted);
 }
 
 /* ============ EDIT TABS/CONTROLS ============ */
@@ -159,7 +159,7 @@
   grid-template-columns: 1.5fr 1fr;
   gap: var(--space-10);
   margin-top: var(--space-4);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--color-border);
   padding-top: var(--space-8);
 }
 
@@ -167,7 +167,7 @@
   font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 600;
-  color: white;
+  color: var(--color-text);
   margin-bottom: var(--space-6);
   display: flex;
   align-items: center;
@@ -188,10 +188,10 @@
 
 /* ============ GENRES ============ */
 .genresSection {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--color-bg-tertiary);
   border-radius: 16px;
   padding: var(--space-6);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
 }
 
 .genreGrid {
@@ -212,7 +212,7 @@
 .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(255, 255, 255, 0.1);
+  border: 3px solid var(--color-spinner-track);
   border-top-color: var(--color-accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;

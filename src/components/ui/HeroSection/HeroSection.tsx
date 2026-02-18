@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Magnetic } from "@/components/ui/Magnetic/Magnetic";
 import { Button3D } from "@/components/ui/Button3D/Button3D";
 import { TrailerModal } from "@/components/ui";
@@ -27,9 +27,12 @@ export function HeroSection({ items, onItemClick }: HeroSectionProps) {
   const [index, setIndex] = useState(0);
   const [showTrailer, setShowTrailer] = useState(false);
   const [progress, setProgress] = useState(0);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
 
   const currentItem = items[index];
   const SLIDE_DURATION = 10000; // 10 seconds
+  const SWIPE_THRESHOLD = 50; // minimum px for a swipe
 
   // Auto-rotate items with progress tracking
   useEffect(() => {
@@ -59,10 +62,39 @@ export function HeroSection({ items, onItemClick }: HeroSectionProps) {
     setProgress(0);
   };
 
+  // Touch/swipe handlers for horizontal swipe navigation
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const diff = touchStartX.current - touchEndX.current;
+    if (Math.abs(diff) > SWIPE_THRESHOLD) {
+      if (diff > 0) {
+        // Swiped left → next slide
+        setIndex((prev) => (prev + 1) % items.length);
+      } else {
+        // Swiped right → prev slide
+        setIndex((prev) => (prev - 1 + items.length) % items.length);
+      }
+      setProgress(0);
+    }
+  };
+
   if (!currentItem) return null;
 
   return (
-    <section className={styles.hero}>
+    <section
+      className={styles.hero}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <AnimatePresence mode="wait">
         <motion.div
           key={currentItem.id}

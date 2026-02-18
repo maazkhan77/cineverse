@@ -1,6 +1,6 @@
 "use client";
 
-import { HeroSection, MoodTuner, MOOD_GENRES, Carousel, CarouselItem } from "@/components/ui";
+import { HeroSection, MoodTuner, MOOD_GENRES, Carousel, CarouselItem, TMDBBlockedFallback } from "@/components/ui";
 import { BentoGrid } from "@/components/ui/BentoGrid/BentoGrid";
 import { MovieCard } from "@/components/ui/MovieCard";
 import { Skeleton } from "@/components/ui/Skeleton/Skeleton";
@@ -27,7 +27,11 @@ export default function HomeContent() {
   const [activeMood, setActiveMood] = useState<Mood>("all");
 
   // Fetch all data with TanStack Query
-  const { data: trendingMoviesData, isLoading: loadingTrendingMovies } = useTrendingMovies();
+  const { 
+    data: trendingMoviesData, 
+    isLoading: loadingTrendingMovies, 
+    isError: isTrendingError 
+  } = useTrendingMovies();
   const { data: trendingTVData, isLoading: loadingTrendingTV } = useTrendingTV();
   const { data: nowPlayingData, isLoading: loadingNowPlaying } = useNowPlaying();
   const { data: upcomingData, isLoading: loadingUpcoming } = useUpcoming();
@@ -97,6 +101,14 @@ export default function HomeContent() {
       </Carousel>
     );
   };
+
+  if (isTrendingError) {
+    return (
+      <main className={styles.main}>
+        <TMDBBlockedFallback />
+      </main>
+    );
+  }
 
   return (
     <main className={styles.main}>

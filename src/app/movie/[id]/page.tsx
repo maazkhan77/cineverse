@@ -24,21 +24,12 @@ const formatRuntime = (mins: number) => {
   };
 
 export default async function MovieDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = await params;
-  const { id } = resolvedParams;
-  
-  console.log(`[MoviePage] Rendering for ID: ${id}`);
+  const { id } = await params;
   
   const data = await getMovieDetails(id).catch(e => {
      console.error(`[MoviePage] Failed to fetch movie data for ID: ${id}`, e);
      return null;
   });
-
-  if (data) {
-    console.log(`[MoviePage] Successfully fetched data for ID: ${id}. Title: ${data.details?.title}`);
-  } else {
-    console.error(`[MoviePage] Data is null for ID: ${id}`);
-  }
 
   if (!data) {
     return (

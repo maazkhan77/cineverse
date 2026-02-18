@@ -23,9 +23,6 @@ export interface TMDBResponse {
 }
 
 async function tmdbFetch<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
-  // Debug log for troubleshooting deployment issues
-  console.log(`[TMDB] Fetching: ${endpoint} | Key present: ${!!TMDB_API_KEY}`);
-
   if (!TMDB_API_KEY) {
     console.error(`[TMDB] TMDB_API_KEY is missing in environment variables!`);
     throw new Error("TMDB_API_KEY is not set. Please configure it in your VERCEL environment variables (Settings -> Environment Variables).");
@@ -41,10 +38,6 @@ async function tmdbFetch<T>(endpoint: string, params: Record<string, string> = {
     const response = await fetch(url.toString(), { next: { revalidate: 3600 } }); 
     
     if (!response.ok) {
-      console.error(`[TMDB] Error ${response.status} for ${endpoint}: ${response.statusText}`);
-      // Log response body if possible for more detail
-      const text = await response.text().catch(() => "No body");
-      console.error(`[TMDB] Response body:`, text);
       throw new Error(`TMDB API error: ${response.status} ${response.statusText}`);
     }
 
