@@ -23,9 +23,12 @@ export interface TMDBResponse {
 }
 
 async function tmdbFetch<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
+  // Debug log for troubleshooting deployment issues
+  console.log(`[TMDB] Fetching: ${endpoint} | Key present: ${!!TMDB_API_KEY}`);
+
   if (!TMDB_API_KEY) {
-    console.error(`[TMDB] TMDB_API_KEY is not set! Failed to fetch: ${endpoint}`);
-    throw new Error("TMDB_API_KEY is not set. Please configure it in your environment variables.");
+    console.error(`[TMDB] TMDB_API_KEY is missing in environment variables!`);
+    throw new Error("TMDB_API_KEY is not set. Please configure it in your VERCEL environment variables (Settings -> Environment Variables).");
   }
 
   const url = new URL(`${TMDB_BASE_URL}${endpoint}`);
@@ -34,14 +37,22 @@ async function tmdbFetch<T>(endpoint: string, params: Record<string, string> = {
     url.searchParams.set(key, value);
   });
 
-  // Use next: { revalidate } for ISR if desired, or simpler fetch for now.
-  // Adding minimal caching 
-  const response = await fetch(url.toString(), { next: { revalidate: 3600 } }); 
-  if (!response.ok) {
-    throw new Error(`TMDB API error: ${response.statusText}`);
-  }
+  try {
+    const response = await fetch(url.toString(), { next: { revalidate: 3600 } }); 
+    
+    if (!response.ok) {
+      console.error(`[TMDB] Error ${response.status} for ${endpoint}: ${response.statusText}`);
+      // Log response body if possible for more detail
+      const text = await response.text().catch(() => "No body");
+      console.error(`[TMDB] Response body:`, text);
+      throw new Error(`TMDB API error: ${response.status} ${response.statusText}`);
+    }
 
-  return response.json();
+    return response.json();
+  } catch (error) {
+    console.error(`[TMDB] Network/Fetch error for ${endpoint}:`, error);
+    throw error;
+  }
 }
 
 export async function getTrendingMovies() {
