@@ -80,7 +80,7 @@ export function CanimaSyncWaitingRoom({ roomId, participants, isHost, onStart, o
           {isHost ? (
             <Button3D 
               onClick={onStart}
-              disabled={participants.length < 1}
+              disabled={participants.length < 2}
               style={{ minWidth: 200 }}
               icon={
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">

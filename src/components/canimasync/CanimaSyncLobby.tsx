@@ -239,7 +239,7 @@ export function CanimaSyncLobby({ onJoin }: CanimaSyncLobbyProps) {
                         onClick={handleCreate}
                         disabled={!userName || selectedGenres.length === 0 || isSubmitting}
                         icon={<ArrowRight size={16} />}
-                        className="w-full"
+                        className={styles.submitBtn}
                       >
                         {isSubmitting ? "Creating..." : "Start Matching"}
                       </Button3D>

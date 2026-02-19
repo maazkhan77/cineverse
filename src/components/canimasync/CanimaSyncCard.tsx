@@ -61,14 +61,7 @@ export function CanimaSyncCard({
     }
   }, [isActive, trailerUrl]);
 
-  const handleVideoReady = () => {
-    setVideoReady(true);
-  };
 
-  const handleVideoEnded = () => {
-    // Maybe verify if we want to loop or revert to poster? 
-    // ReactPlayer 'loop' prop handles looping.
-  };
 
   return (
     <div className={styles.card}>
@@ -88,11 +81,10 @@ export function CanimaSyncCard({
               muted={muted}
               loop={true}
               controls={false}
-              onReady={handleVideoReady}
-              onEnded={handleVideoEnded}
+              onReady={() => setVideoReady(true)}
               config={{
                 youtube: {
-                  playerVars: { showinfo: 0, controls: 0, modestbranding: 1, rel: 0, iv_load_policy: 3 }
+                  playerVars: { showinfo: 0, controls: 0, modestbranding: 1, rel: 0, iv_load_policy: 3, autoplay: 1, playsinline: 1 }
                 }
               }}
               style={{pointerEvents: 'none', transform: 'scale(1.3)'}} // Zoom in slightly to avoid black bars
@@ -138,7 +130,7 @@ export function CanimaSyncCard({
         {/* Real-time Voting Stats */}
         {votingStats && votingStats.count > 0 && (
           <div className={styles.votingStats}>
-            <Heart size={14} className="text-red-500" fill="#ef4444" />
+            <Heart size={14} style={{color: '#ef4444'}} fill="#ef4444" />
             <div className={styles.avatars}>
               {votingStats.profiles.slice(0, 3).map((p, i) => (
                 <div key={i} className={styles.avatar} style={{zIndex: 3-i}}>
@@ -158,7 +150,7 @@ export function CanimaSyncCard({
           </button>
           
           <button className={styles.infoBtn} onClick={onInfo}>
-             <Info size={24} />
+             <Info size={18} />
              <span>Details</span>
           </button>
 

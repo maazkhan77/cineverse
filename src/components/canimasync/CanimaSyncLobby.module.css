@@ -214,3 +214,7 @@
   }
 }
 
+/* Full-width submit button */
+.submitBtn {
+  width: 100%;
+}

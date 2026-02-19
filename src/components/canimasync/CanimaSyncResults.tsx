@@ -14,13 +14,14 @@ interface CanimaSyncResultsProps {
     posterPath?: string;
     releaseDate?: string;
   }[];
+  onPlayAgain?: () => void;
+  mediaType?: "movie" | "tv";
 }
 
-export function CanimaSyncResults({ matches }: CanimaSyncResultsProps) {
+export function CanimaSyncResults({ matches, onPlayAgain, mediaType = "movie" }: CanimaSyncResultsProps) {
   const router = useRouter();
 
   useEffect(() => {
-    // Fire confetti on mount
     const duration = 3000;
     const end = Date.now() + duration;
 
@@ -48,6 +49,11 @@ export function CanimaSyncResults({ matches }: CanimaSyncResultsProps) {
     frame();
   }, []);
 
+  // Route based on media type (#18)
+  const getDetailRoute = (tmdbId: number) => {
+    return mediaType === "tv" ? `/tv/${tmdbId}` : `/movie/${tmdbId}`;
+  };
+
   return (
     <div className={styles.container}>
       <motion.h1 
@@ -56,54 +62,53 @@ export function CanimaSyncResults({ matches }: CanimaSyncResultsProps) {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", bounce: 0.5 }}
       >
-        {matches.length > 1 ? `You matched on ${matches.length} movies!` : "It's a Match!"}
+        {matches.length > 1 ? `You matched on ${matches.length} movies!` : matches.length === 1 ? "It's a Match!" : "No Matches Found"}
       </motion.h1>
 
-      <div style={{
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
-          gap: 20, 
-          width: '100%', 
-          maxWidth: 800, 
-          margin: '40px 0'
-      }}>
+      {matches.length === 0 && (
+        <p style={{ color: '#999', fontSize: '1.1rem', marginBottom: 30 }}>
+          No one agreed on the same movie this time. Try again with different genres!
+        </p>
+      )}
+
+      <div className={styles.resultsGrid}>
         {matches.map((movie, index) => (
-            <motion.div 
-                key={movie.tmdbId}
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: index * 0.1 }}
-                style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10}}
-            >
-                <div style={{position: 'relative', width: '100%', aspectRatio: '2/3', borderRadius: 12, overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.5)'}}>
-                    {movie.posterPath && (
-                    <Image
-                        src={`https://image.tmdb.org/t/p/w500${movie.posterPath}`}
-                        alt={movie.title}
-                        fill
-                        className={styles.poster}
-                    />
-                    )}
-                </div>
-                <div style={{textAlign: 'center'}}>
-                    <h3 className={styles.title} style={{fontSize: '1rem'}}>{movie.title}</h3>
-                    <p className={styles.meta} style={{fontSize: '0.8rem'}}>{movie.releaseDate?.split('-')[0]}</p>
-                    <button 
-                         className={styles.primaryBtn}
-                         style={{padding: '8px 16px', fontSize: '0.8rem', marginTop: 8}}
-                         onClick={() => router.push(`/movie/${movie.tmdbId}`)}
-                    >
-                        Watch
-                    </button>
-                </div>
-            </motion.div>
+          <motion.div 
+            key={movie.tmdbId}
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: index * 0.1 }}
+            className={styles.resultCard}
+          >
+            <div className={styles.resultPosterWrapper}>
+              {movie.posterPath && (
+                <Image
+                  src={`https://image.tmdb.org/t/p/w500${movie.posterPath}`}
+                  alt={movie.title}
+                  fill
+                  className={styles.poster}
+                />
+              )}
+            </div>
+            <div style={{textAlign: 'center'}}>
+              <h3 className={styles.title} style={{fontSize: '1rem'}}>{movie.title}</h3>
+              <p className={styles.meta} style={{fontSize: '0.8rem'}}>{movie.releaseDate?.split('-')[0]}</p>
+              <button 
+                className={styles.primaryBtn}
+                style={{padding: '8px 16px', fontSize: '0.8rem', marginTop: 8}}
+                onClick={() => router.push(getDetailRoute(movie.tmdbId))}
+              >
+                View Details
+              </button>
+            </div>
+          </motion.div>
         ))}
       </div>
 
       <div className={styles.buttonGroup}>
         <button 
           className={styles.secondaryBtn}
-          onClick={() => window.location.reload()}
+          onClick={onPlayAgain || (() => window.location.reload())}
         >
           Play Again
         </button>

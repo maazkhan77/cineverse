@@ -263,7 +263,7 @@
   background: rgba(0,0,0,0.95);
   z-index: 100;
   backdrop-filter: blur(20px);
-  padding: 24px;
+  padding: 80px 24px 24px; /* Top padding clears fixed navbar */
   overflow-y: auto;
   animation: fadeIn 0.3s ease;
 }
@@ -295,8 +295,10 @@
 
 .historyGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .historyItem {
@@ -323,3 +325,22 @@
   font-size: 0.8rem;
   font-weight: 600;
 }
+
+/* Badge count (for History/Matches buttons) */
+.badgeCount {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+

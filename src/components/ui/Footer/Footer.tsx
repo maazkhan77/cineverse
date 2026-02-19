@@ -3,7 +3,7 @@ import styles from "./Footer.module.css";
 export function Footer() {
   return (
     <footer className={styles.footer}>
-      <span>
+      <p className={styles.text}>
         Made with <span className={styles.heart}>❤️</span> by{" "}
         <a
           href="https://iammaaz.in"
@@ -17,7 +17,7 @@ export function Footer() {
         <span className={styles.link}>
           Antigravity
         </span>
-      </span>
+      </p>
     </footer>
   );
 }

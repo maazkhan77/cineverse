@@ -155,7 +155,7 @@ export default defineSchema({
   matchRooms: defineTable({
     roomId: v.string(), // 4-char code
     hostId: v.optional(v.id("users")), // Optional because user might not be logged in? For now lets say host is optional or we use a session ID
-    status: v.union(v.literal("waiting"), v.literal("voting"), v.literal("matched")),
+    status: v.union(v.literal("waiting"), v.literal("voting"), v.literal("matched"), v.literal("failed")),
     genres: v.array(v.number()),
     providers: v.optional(v.array(v.string())), // TMDB Provider IDs
     mediaType: v.optional(v.union(v.literal("movie"), v.literal("tv"))),
@@ -166,12 +166,12 @@ export default defineSchema({
       posterPath: v.optional(v.string()),
       releaseDate: v.optional(v.string())
     }))),
-    // Deprecated: Legacy field from MatchPoint, keeping for schema validation
+    // Legacy field — kept for backward compatibility with existing data
     currentMatch: v.optional(v.object({
-        tmdbId: v.number(),
-        title: v.string(),
-        posterPath: v.optional(v.string()),
-        releaseDate: v.optional(v.string())
+      tmdbId: v.number(),
+      title: v.string(),
+      posterPath: v.optional(v.string()),
+      releaseDate: v.optional(v.string())
     })),
     createdAt: v.number(),
   }).index("by_roomId", ["roomId"]),
@@ -179,7 +179,7 @@ export default defineSchema({
   // CanimaSync Participants
   matchParticipants: defineTable({
     roomId: v.string(),
-    userId: v.optional(v.string()), // Can be Convex ID or a generated session ID
+    userId: v.string(), // Generated session ID ("host-UUID" or "user-UUID")
     name: v.string(),
     isHost: v.boolean(),
     joinedAt: v.number(),
