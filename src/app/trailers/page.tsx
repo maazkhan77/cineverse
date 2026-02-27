@@ -6,6 +6,7 @@ import { api } from "../../../convex/_generated/api";
 import TrailerDeck from "@/components/ui/TrailerDeck/TrailerDeck";
 import { TrailerFilters } from "@/components/ui/TrailerDeck/TrailerFilters";
 import { TrailerData } from "@/components/ui/TrailerDeck/TrailerSlide";
+import { Navbar } from "@/components/ui/Navbar/Navbar";
 
 type MediaType = "all" | "movie" | "tv";
 
@@ -103,9 +104,40 @@ export default function TrailersPage() {
 
   if (isLoading && trailers.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center w-screen h-screen bg-black text-white gap-4">
-        <div className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-gray-400">Loading trailers...</p>
+      <div className="w-screen h-[100dvh] bg-black overflow-hidden flex items-center justify-center relative">
+        {/* Skeleton Video Layer */}
+        <div className="relative z-10 w-full lg:w-[80%] aspect-video lg:max-h-[80vh] bg-zinc-900/50 lg:rounded-xl overflow-hidden shadow-2xl animate-pulse flex items-center justify-center">
+            {/* Center icon placeholder */}
+           <div className="w-16 h-16 rounded-full bg-zinc-800/50 flex items-center justify-center">
+             <div className="w-8 h-8 rounded-full border-t-2 border-white/20 animate-spin" />
+           </div>
+        </div>
+
+        {/* Skeleton Overlay Details */}
+        <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 pb-20 pointer-events-none bg-gradient-to-t from-black/90 to-transparent">
+          {/* Tags */}
+          <div className="flex gap-2 mb-4">
+            <div className="w-12 h-6 rounded-full bg-zinc-800/80 animate-pulse" />
+            <div className="w-16 h-6 rounded-full bg-zinc-800/80 animate-pulse" />
+          </div>
+          
+          {/* Title */}
+          <div className="w-3/4 max-w-md h-10 md:h-12 bg-zinc-800/80 rounded-md mb-2 animate-pulse" />
+          <div className="w-1/2 max-w-xs h-10 md:h-12 bg-zinc-800/80 rounded-md mb-6 animate-pulse" />
+
+          {/* Description */}
+          <div className="w-full max-w-xl h-4 bg-zinc-800/60 rounded mb-2 animate-pulse" />
+          <div className="w-4/5 max-w-lg h-4 bg-zinc-800/60 rounded mb-8 animate-pulse" />
+
+          {/* Actions */}
+          <div className="flex items-center gap-4">
+            <div className="w-32 h-12 rounded-full bg-zinc-800/80 animate-pulse" />
+            <div className="w-12 h-12 rounded-full bg-zinc-800/80 animate-pulse" />
+            <div className="w-12 h-12 rounded-full bg-zinc-800/80 animate-pulse" />
+          </div>
+        </div>
+        
+        <Navbar />
       </div>
     );
   }

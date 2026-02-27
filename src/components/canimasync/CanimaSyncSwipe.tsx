@@ -124,7 +124,7 @@ export function CanimaSyncSwipe({
   // "All caught up" screen — now with Exit and Finish buttons (#11)
   if (!currentMovie) {
     return (
-      <div className={styles.container}>
+      <div className={styles.container} style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
         <div style={{color: 'white', textAlign: 'center', zIndex: 50, padding: '0 24px'}}>
           <h2 style={{ fontSize: '1.8rem', marginBottom: 8 }}>All caught up! 🎬</h2>
           <p style={{ color: '#999', marginBottom: 24 }}>
