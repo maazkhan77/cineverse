@@ -7,10 +7,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { UserMenu } from "@/components/auth";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { 
-  Search, Film, Tv, Sparkles, ChevronDown, 
-  Zap, Smile, Ghost, Rocket, Heart, Skull, Palette, 
+  Search, Sparkles, ChevronDown, 
   Flame, Star, Calendar, MonitorPlay, Clapperboard,
-  Sword, Map, User, Music, Binoculars
+  Sword, Map, User, Binoculars, Film,
+  Zap, Smile, Heart, Ghost, Rocket, Skull, Palette, Tv
 } from "lucide-react";
 import styles from "./Navbar.module.css";
 
@@ -38,7 +38,8 @@ const TV_GENRES = [
 ];
 
 // Fallback for missing icons
-function Mask(props: any) {
+import { LucideProps } from "lucide-react";
+function Mask(props: LucideProps) {
   return <Film {...props} />;
 }
 
@@ -158,9 +159,12 @@ export function Navbar() {
     };
     
     window.addEventListener("scroll", handleScroll, { passive: true });
-    // Check initial state
-    setIsScrolled(window.scrollY > 10);
     
+    // Set initial without a separate useEffect dependency loop
+    if (typeof window !== "undefined") {
+      queueMicrotask(() => setIsScrolled(window.scrollY > 10));
+    }
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 

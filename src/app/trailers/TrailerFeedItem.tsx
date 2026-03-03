@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./TrailerFeed.module.css"; // We'll share styles
 
 interface TrailerData {
@@ -22,17 +22,17 @@ interface TrailerFeedItemProps {
 }
 
 export function TrailerFeedItem({ item, isActive, isMuted, onToggleMute }: TrailerFeedItemProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
   const [isReady, setIsReady] = useState(false);
-  
-  // Manage playback state based on active prop
-  useEffect(() => {
-    if (isActive) {
-      setIsPlaying(true);
-    } else {
-      setIsPlaying(false);
+
+  const [prevIsActive, setPrevIsActive] = useState(isActive);
+
+  // Reset ready state when item becomes inactive using derived state
+  if (isActive !== prevIsActive) {
+    setPrevIsActive(isActive);
+    if (!isActive) {
+      setIsReady(false);
     }
-  }, [isActive]);
+  }
 
   return (
     <div className={styles.feedItem}>
@@ -62,21 +62,18 @@ export function TrailerFeedItem({ item, isActive, isMuted, onToggleMute }: Trail
         )}
         
         {/* Poster - shows when not active or loading */}
-        <img 
+        <Image 
           src={item.poster_path 
             ? `https://image.tmdb.org/t/p/original${item.poster_path}`
             : '/placeholder.jpg'
           } 
-          alt={item.title || item.name} 
+          alt={item.title || item.name || "Poster"} 
+          fill
           className={styles.posterBackground}
           style={{
             opacity: (isReady && isActive) ? 0 : 1,
             transition: 'opacity 0.5s ease-in-out',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
+            objectFit: 'cover',
             zIndex: 1
           }}
         />

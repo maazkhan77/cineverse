@@ -168,7 +168,7 @@ export const generateMoviePool = action({
       }
 
       const results = await Promise.all(promises);
-      let allMovieIds: number[] = [];
+      const allMovieIds: number[] = [];
       results.forEach(data => {
         if (data.results) {
           allMovieIds.push(...data.results.map((m: { id: number }) => m.id));
@@ -335,21 +335,46 @@ export const hydrateMovies = action({
     }
 
     const type = args.mediaType || "movie";
-    const results: any[] = [];
+
+    interface TMDBHydratedResponse {
+      id: number;
+      title?: string;
+      name?: string;
+      poster_path?: string;
+      backdrop_path?: string;
+      overview?: string;
+      vote_average?: number;
+      release_date?: string;
+      first_air_date?: string;
+      genres?: { name: string }[];
+      videos?: { results: unknown[] };
+      credits?: unknown;
+      runtime?: number;
+      episode_run_time?: number[];
+      "watch/providers"?: {
+        results?: {
+          IN?: {
+            flatrate?: unknown[];
+          };
+        };
+      };
+    }
+
+    const results: TMDBHydratedResponse[] = [];
 
     // Batch in groups of 20 to avoid overwhelming TMDB
     for (let i = 0; i < args.tmdbIds.length; i += 20) {
       const batch = args.tmdbIds.slice(i, i + 20);
       const promises = batch.map(id =>
         fetch(`https://api.themoviedb.org/3/${type}/${id}?api_key=${apiKey}&append_to_response=videos,credits,watch/providers`)
-          .then(r => r.json())
+          .then(r => r.json() as Promise<TMDBHydratedResponse>)
           .catch(() => null) // Skip individual failures
       );
       const batchResults = await Promise.all(promises);
-      results.push(...batchResults.filter(Boolean));
+      results.push(...batchResults.filter((r): r is TMDBHydratedResponse => r !== null));
     }
 
-    return results.map((m: any) => ({
+    return results.map((m) => ({
       tmdbId: m.id,
       title: m.title || m.name,
       posterPath: m.poster_path,
@@ -357,7 +382,7 @@ export const hydrateMovies = action({
       overview: m.overview,
       voteAverage: m.vote_average,
       releaseDate: m.release_date || m.first_air_date,
-      genres: m.genres?.map((g: any) => g.name).slice(0, 3) || [],
+      genres: m.genres?.map((g) => g.name).slice(0, 3) || [],
       videos: m.videos?.results || [],
       credits: m.credits,
       runtime: m.runtime || (m.episode_run_time ? m.episode_run_time[0] : null),

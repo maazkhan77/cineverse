@@ -1,39 +1,39 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+
 import styles from "./CanimaSyncSwipe.module.css";
 import Image from "next/image";
-import { X, Heart, Info, History, Volume2, VolumeX, MonitorPlay, LogOut } from "lucide-react";
+import { X, History, MonitorPlay, LogOut } from "lucide-react";
 import { CurtainTransition } from "./CurtainTransition";
 import { CanimaSyncCard } from "./CanimaSyncCard";
 import { CanimaSyncTutorial } from "./CanimaSyncTutorial";
 
 interface Card {
   tmdbId: number;
-  title: string;
-  posterPath: string | null;
+  title?: string;
+  posterPath?: string | null;
   backdropPath?: string | null;
-  overview: string;
-  voteAverage: number;
-  releaseDate: string;
+  overview?: string;
+  voteAverage?: number;
+  releaseDate?: string;
   genres?: string[];
-  videos?: any[];
-  credits?: any;
+  videos?: { site: string; type: string; key: string }[];
+  credits?: { cast: { id: number; name: string; character: string; profile_path: string | null }[] };
   runtime?: number;
   mediaType?: "movie" | "tv";
-  providers?: any[];
+  providers?: { provider_id: number; provider_name: string; logo_path: string }[];
 }
 
 interface CanimaSyncSwipeProps {
   movies: Card[];
-  onVote: (movieId: number, vote: "like" | "dislike", details: any) => void;
-  history?: any[];
-  matches?: any[];
+  onVote: (movieId: number, vote: "like" | "dislike", details: Card) => void;
+  history?: Card[];
+  matches?: Card[];
   onFinish?: () => void;
   onExit?: () => void;
-  votes?: any[];
-  participants?: any[];
+  votes?: { tmdbId: number; userId: string; vote: string }[];
+  participants?: { userId: string; name: string; avatarUrl?: string }[];
   onLoadMore?: () => void;
   isLoadingMore?: boolean;
   totalPoolSize?: number;
@@ -54,7 +54,6 @@ export function CanimaSyncSwipe({
 }: CanimaSyncSwipeProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showCurtain, setShowCurtain] = useState(false);
-  const [movieReady, setMovieReady] = useState(true);
   const [muted, setMuted] = useState(true);
   
   // Modals
@@ -66,7 +65,7 @@ export function CanimaSyncSwipe({
   // Show tutorial on first visit
   useEffect(() => {
     if (!localStorage.getItem("canima_tutorialSeen")) {
-      setShowTutorial(true);
+      queueMicrotask(() => setShowTutorial(true));
     }
   }, []);
 
@@ -84,11 +83,9 @@ export function CanimaSyncSwipe({
 
     setTimeout(() => {
       onVote(currentMovie.tmdbId, vote, currentMovie);
-      setMovieReady(false);
       setCurrentIndex(prev => prev + 1);
       
       setTimeout(() => {
-        setMovieReady(true);
         setTimeout(() => {
           setShowCurtain(false);
         }, 200);
@@ -102,11 +99,11 @@ export function CanimaSyncSwipe({
   const getVotingStats = () => {
     if (!currentMovie || !votes || !participants) return undefined;
     
-    const movieLikes = votes.filter((v: any) => v.tmdbId === currentMovie.tmdbId && v.vote === "like");
+    const movieLikes = votes.filter((v) => v.tmdbId === currentMovie.tmdbId && v.vote === "like");
     if (movieLikes.length === 0) return undefined;
 
-    const profiles = movieLikes.map((like: any) => {
-      const participant = participants.find((p: any) => p.userId === like.userId);
+    const profiles = movieLikes.map((like) => {
+      const participant = participants.find((p) => p.userId === like.userId);
       return {
         name: participant ? participant.name : "Unknown",
         avatar: ""
@@ -185,12 +182,12 @@ export function CanimaSyncSwipe({
               <button onClick={() => setShowHistory(false)} className={styles.closeBtn}><X /></button>
             </div>
             <div className={styles.historyGrid}>
-              {history.map((m: any) => (
+              {history.map((m) => (
                 <div key={m.tmdbId} className={styles.historyItem}>
                   {m.posterPath && (
                     <Image 
                       src={`https://image.tmdb.org/t/p/w342${m.posterPath}`} 
-                      alt={m.title} 
+                      alt={m.title || "Movie"} 
                       fill 
                       className={styles.historyPoster}
                     />
@@ -211,12 +208,12 @@ export function CanimaSyncSwipe({
               <button onClick={() => setShowMatches(false)} className={styles.closeBtn}><X /></button>
             </div>
             <div className={styles.historyGrid}>
-              {matches.map((m: any) => (
+              {matches.map((m) => (
                 <div key={m.tmdbId} className={styles.historyItem} style={{borderColor: '#4ade80', borderWidth: 2, borderStyle: 'solid'}}>
                   {m.posterPath && (
                     <Image 
                       src={`https://image.tmdb.org/t/p/w342${m.posterPath}`} 
-                      alt={m.title} 
+                      alt={m.title || "Movie"} 
                       fill 
                       className={styles.historyPoster}
                     />
@@ -287,7 +284,7 @@ export function CanimaSyncSwipe({
               <div style={{marginBottom: 30}}>
                 <h3 style={{marginBottom: 15, color: '#aaa', textTransform: 'uppercase', letterSpacing: 1}}>Streaming In India</h3>
                 <div style={{display: 'flex', gap: 12}}>
-                  {showInfo.providers.map((p: any) => (
+                  {showInfo.providers.map((p) => (
                     <div key={p.provider_id} title={p.provider_name}>
                       <Image 
                         src={`https://image.tmdb.org/t/p/original${p.logo_path}`}
@@ -306,7 +303,7 @@ export function CanimaSyncSwipe({
               <>
                 <h3 style={{marginBottom: 15, color: '#aaa', textTransform: 'uppercase', letterSpacing: 1}}>Cast</h3>
                 <div style={{display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 20}}>
-                  {showInfo.credits.cast.slice(0, 10).map((actor: any) => (
+                  {showInfo.credits.cast.slice(0, 10).map((actor) => (
                     <div key={actor.id} style={{minWidth: 100, textAlign: 'center'}}>
                       {actor.profile_path ? (
                         <Image 
@@ -338,17 +335,17 @@ export function CanimaSyncSwipe({
             <button onClick={() => setShowHistory(false)} className={styles.closeBtn}><X size={32}/></button>
           </div>
           <div className={styles.historyGrid}>
-            {history.map((m: any) => (
+            {history.map((m) => (
               <div key={m.tmdbId} className={styles.historyItem}>
                 {m.posterPath && (
                   <Image 
                     src={`https://image.tmdb.org/t/p/w342${m.posterPath}`} 
-                    alt={m.title} 
+                    alt={m.title || "Movie"} 
                     fill 
                     className={styles.historyPoster}
                   />
                 )}
-                <div className={styles.historyTitleOverlay}>{m.title}</div>
+                <div className={styles.historyTitleOverlay}>{m.title || "Untitled"}</div>
               </div>
             ))}
             {history.length === 0 && <p style={{color: '#999', gridColumn: '1/-1', textAlign: 'center'}}>No likes yet!</p>}
@@ -364,17 +361,17 @@ export function CanimaSyncSwipe({
             <button onClick={() => setShowMatches(false)} className={styles.closeBtn}><X size={32}/></button>
           </div>
           <div className={styles.historyGrid}>
-            {matches.map((m: any) => (
+            {matches.map((m) => (
               <div key={m.tmdbId} className={styles.historyItem} style={{borderColor: '#4ade80', borderWidth: 2, borderStyle: 'solid'}}>
                 {m.posterPath && (
                   <Image 
                     src={`https://image.tmdb.org/t/p/w342${m.posterPath}`} 
-                    alt={m.title} 
+                    alt={m.title || "Movie"} 
                     fill 
                     className={styles.historyPoster}
                   />
                 )}
-                <div className={styles.historyTitleOverlay} style={{background: 'rgba(74, 222, 128, 0.8)'}}>{m.title}</div>
+                <div className={styles.historyTitleOverlay} style={{background: 'rgba(74, 222, 128, 0.8)'}}>{m.title || "Untitled"}</div>
               </div>
             ))}
             {matches.length === 0 && <p style={{color: '#999', gridColumn: '1/-1', textAlign: 'center'}}>No matches yet.</p>}

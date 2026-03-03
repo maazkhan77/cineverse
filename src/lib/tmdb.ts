@@ -22,6 +22,66 @@ export interface TMDBResponse {
   total_pages: number;
 }
 
+interface TMDBVideo {
+  site: string;
+  type: string;
+  key: string;
+  name: string;
+}
+
+interface TMDBGenre {
+  id: number;
+  name: string;
+}
+
+interface TMDBCastMember {
+  id: number;
+  name: string;
+  profile_path: string | null;
+  character: string;
+}
+
+interface TMDBCreator {
+  id: number;
+  name: string;
+}
+
+interface TMDBSeason {
+  id: number;
+  season_number: number;
+  name: string;
+  episode_count: number;
+  poster_path: string | null;
+  air_date: string | null;
+}
+
+interface TMDBDetailResponse {
+  id: number;
+  title?: string;
+  name?: string;
+  overview: string;
+  poster_path: string | null;
+  backdrop_path: string | null;
+  vote_average: number;
+  tagline?: string;
+  status: string;
+  runtime?: number;
+  release_date?: string;
+  first_air_date?: string;
+  last_air_date?: string;
+  budget?: number;
+  revenue?: number;
+  number_of_seasons?: number;
+  number_of_episodes?: number;
+  genres?: TMDBGenre[];
+  seasons?: TMDBSeason[];
+  created_by?: TMDBCreator[];
+  credits?: { cast?: TMDBCastMember[] };
+  videos?: { results?: TMDBVideo[] };
+  similar?: { results?: TMDBResult[] };
+  "watch/providers"?: Record<string, unknown>;
+}
+
 async function tmdbFetch<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
   if (!TMDB_API_KEY) {
     console.error(`[TMDB] TMDB_API_KEY is missing in environment variables!`);
@@ -89,7 +149,7 @@ export async function getDiscoverSeries(params: Record<string, string> = {}) {
 }
 
 export async function getMovieDetails(id: string) {
-    const res = await tmdbFetch<any>(`/movie/${id}`, {
+    const res = await tmdbFetch<TMDBDetailResponse>(`/movie/${id}`, {
         append_to_response: "credits,videos,similar,watch/providers"
     });
     
@@ -98,13 +158,13 @@ export async function getMovieDetails(id: string) {
         cast: res.credits?.cast?.slice(0, 12) || [],
         similar: res.similar?.results?.slice(0, 10) || [],
         trailer: res.videos?.results?.find(
-            (v: any) => v.site === "YouTube" && v.type === "Trailer"
+            (v) => v.site === "YouTube" && v.type === "Trailer"
         )
     };
 }
 
 export async function getTVDetails(id: string) {
-     const res = await tmdbFetch<any>(`/tv/${id}`, {
+     const res = await tmdbFetch<TMDBDetailResponse>(`/tv/${id}`, {
         append_to_response: "credits,videos,similar,watch/providers"
     });
     
@@ -113,7 +173,7 @@ export async function getTVDetails(id: string) {
         cast: res.credits?.cast?.slice(0, 12) || [],
         similar: res.similar?.results?.slice(0, 10) || [],
         trailer: res.videos?.results?.find(
-            (v: any) => v.site === "YouTube" && v.type === "Trailer"
+            (v) => v.site === "YouTube" && v.type === "Trailer"
         )
     };
 }

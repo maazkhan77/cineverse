@@ -16,7 +16,7 @@ export function TMDBBlockedFallback() {
         <h2 className={styles.title}>Connection Issue Detected</h2>
         
         <p className={styles.message}>
-          We're having trouble connecting to the movie database (TMDB). This often happens if your Internet Service Provider (ISP) blocks access to TMDB.
+          We&apos;re having trouble connecting to the movie database (TMDB). This often happens if your Internet Service Provider (ISP) blocks access to TMDB.
         </p>
 
         <div className={styles.recommendations}>
@@ -26,7 +26,7 @@ export function TMDBBlockedFallback() {
           </div>
           <div className={styles.recommendationItem}>
             <AlertTriangle size={20} className={styles.warningIcon} />
-            <span>If you are using a VPN, try disabling it, or enable it if you aren't using one.</span>
+            <span>If you are using a VPN, try disabling it, or enable it if you aren&apos;t using one.</span>
           </div>
         </div>
 

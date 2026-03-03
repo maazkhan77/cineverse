@@ -15,7 +15,7 @@ interface MovieCardOverlayProps {
   rect: DOMRect | null;
   movie: {
     id: number;
-    title: string;
+    title?: string;
     posterPath: string | null;
     backdropPath?: string | null;
     voteAverage: number;
@@ -29,9 +29,16 @@ interface MovieCardOverlayProps {
 }
 
 // Internal component for Watchlist logic to keep main component clean
-function WatchlistButton({ movieId, movieTitle, posterPath, voteAverage, mediaType }: any) {
+interface WatchlistButtonProps {
+  movieId: number;
+  movieTitle?: string;
+  posterPath?: string | null;
+  voteAverage: number;
+  mediaType: "movie" | "tv";
+}
+
+function WatchlistButton({ movieId, movieTitle, posterPath, voteAverage, mediaType }: WatchlistButtonProps) {
   const { isAuthenticated } = useConvexAuth();
-  const router = useRouter();
   const isInWatchlist = useQuery(api.watchlist.isInWatchlist, { tmdbId: movieId });
   const addToWatchlist = useMutation(api.watchlist.add);
   const removeFromWatchlist = useMutation(api.watchlist.remove);
@@ -53,13 +60,13 @@ function WatchlistButton({ movieId, movieTitle, posterPath, voteAverage, mediaTy
         await addToWatchlist({
           tmdbId: movieId,
           mediaType,
-          title: movieTitle,
+          title: movieTitle || "Untitled",
           posterPath: posterPath || undefined,
           voteAverage,
         });
         toast.success("Added to watchlist");
       }
-    } catch (err) {
+    } catch (_err) {
       toast.error("Failed to update watchlist");
     } finally {
       setIsLoading(false);
@@ -89,20 +96,18 @@ function WatchlistButton({ movieId, movieTitle, posterPath, voteAverage, mediaTy
 import { TrailerModal } from "@/components/ui/TrailerModal/TrailerModal";
 
 export function MovieCardOverlay({ isOpen, rect, movie, onClose, onMouseEnter, onClick }: MovieCardOverlayProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = typeof window !== "undefined";
   const [showTrailer, setShowTrailer] = useState(false);
   const [trailerKey, setTrailerKey] = useState<string | null>(null);
   
   const getTrailer = useAction(api.tmdb.getTrailer);
 
   useEffect(() => {
-    setMounted(true);
     if (isOpen) {
         getTrailer({ id: movie.id, mediaType: movie.mediaType })
             .then((key) => setTrailerKey(key))
             .catch((e) => console.error("Failed to fetch trailer", e));
     }
-    return () => setMounted(false);
   }, [isOpen, movie.id, movie.mediaType, getTrailer]);
 
   if (!mounted || !rect || typeof document === 'undefined') return null;
@@ -282,7 +287,7 @@ export function MovieCardOverlay({ isOpen, rect, movie, onClose, onMouseEnter, o
 
               <div className={styles.header}>
                 <div>
-                   <h4 className={styles.title}>{movie.title}</h4>
+                   <h2 className={styles.overlayTitle}>{movie.title || "Untitled"}</h2>
                    <div className={styles.meta}>
                     <span className={styles.match}>{matchScore}% Match</span>
                     <span>{year}</span>

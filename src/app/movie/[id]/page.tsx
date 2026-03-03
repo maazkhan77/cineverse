@@ -52,7 +52,7 @@ export default async function MovieDetailPage({ params }: { params: Promise<{ id
             <div className={styles.backdropWrapper}>
                 <Image
                 src={`https://image.tmdb.org/t/p/original${details.backdrop_path}`}
-                alt={details.title}
+                alt={details.title || "Movie backdrop"}
                 fill
                 className={styles.backdrop}
                 priority
@@ -76,7 +76,7 @@ export default async function MovieDetailPage({ params }: { params: Promise<{ id
               <div className={styles.poster}>
                 <Image
                   src={`https://image.tmdb.org/t/p/w500${details.poster_path}`}
-                  alt={details.title}
+                  alt={details.title || "Movie poster"}
                   width={300}
                   height={450}
                   className={styles.posterImage}
@@ -101,13 +101,13 @@ export default async function MovieDetailPage({ params }: { params: Promise<{ id
                 {details.release_date && (
                   <span>{new Date(details.release_date).getFullYear()}</span>
                 )}
-                {details.runtime > 0 && (
-                  <span>{formatRuntime(details.runtime)}</span>
+                {(details.runtime ?? 0) > 0 && (
+                  <span>{formatRuntime(details.runtime ?? 0)}</span>
                 )}
               </div>
 
               <div className={styles.genres}>
-                {details.genres?.map((g: any) => (
+                {details.genres?.map((g: { id: number; name: string }) => (
                   <span key={g.id} className={styles.genre}>
                     {g.name}
                   </span>
@@ -119,7 +119,7 @@ export default async function MovieDetailPage({ params }: { params: Promise<{ id
               {/* Client Interactions */}
               <MovieInteractions 
                 movieId={details.id}
-                movieTitle={details.title}
+                movieTitle={details.title || ""}
                 posterPath={details.poster_path}
                 voteAverage={details.vote_average}
                 trailerKey={trailer?.key}
@@ -145,7 +145,7 @@ export default async function MovieDetailPage({ params }: { params: Promise<{ id
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Cast</h2>
               <div className={styles.castScroll}>
-                {cast.map((person: any) => (
+                {cast.map((person) => (
                   <Link
                     href={`/person/${person.id}`}
                     key={person.id}
@@ -199,11 +199,11 @@ export default async function MovieDetailPage({ params }: { params: Promise<{ id
               </div>
               <div className={styles.detailItem}>
                 <span className={styles.detailLabel}>Budget</span>
-                <span className={styles.detailValue}>{formatMoney(details.budget)}</span>
+                <span className={styles.detailValue}>{formatMoney(details.budget ?? 0)}</span>
               </div>
               <div className={styles.detailItem}>
                 <span className={styles.detailLabel}>Revenue</span>
-                <span className={styles.detailValue}>{formatMoney(details.revenue)}</span>
+                <span className={styles.detailValue}>{formatMoney(details.revenue ?? 0)}</span>
               </div>
             </div>
           </section>
@@ -213,7 +213,7 @@ export default async function MovieDetailPage({ params }: { params: Promise<{ id
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>More Like This</h2>
               <div className={styles.similarGrid}>
-                {similar.map((movie: any) => (
+                {similar.map((movie) => (
                   <div key={movie.id} style={{ position: 'relative' }}>
                     <Link href={`/movie/${movie.id}`} className="absolute inset-0 z-0" aria-label={movie.title} />
                     <MovieCard

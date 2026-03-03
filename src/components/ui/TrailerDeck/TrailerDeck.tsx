@@ -22,12 +22,25 @@ export default function TrailerDeck({
   const [isMuted, setIsMuted] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Update activeId when trailers change (new items loaded)
-  useEffect(() => {
-    if (trailers.length > 0 && !trailers.find(t => t.id === activeId)) {
+  const [prevTrailers, setPrevTrailers] = useState(trailers);
+
+  // Update activeId when trailers change (new items loaded) using derived state approach 
+  // to avoid cascading effect setStates
+  if (trailers !== prevTrailers) {
+    setPrevTrailers(trailers);
+    if (trailers.length > 0 && !trailers.find((t) => t.id === activeId)) {
       setActiveId(trailers[0].id);
     }
-  }, [trailers, activeId]);
+  }
+
+  // Scroll helper — declared before useEffect so it's available in the closure
+  const scrollToIndex = useCallback((index: number) => {
+    if (!containerRef.current) return;
+    const slides = containerRef.current.children;
+    if (slides[index]) {
+      slides[index].scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
 
   // Keyboard Navigation
   useEffect(() => {
@@ -52,15 +65,7 @@ export default function TrailerDeck({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeId, trailers]);
-
-  const scrollToIndex = (index: number) => {
-    if (!containerRef.current) return;
-    const slides = containerRef.current.children;
-    if (slides[index]) {
-      slides[index].scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  }, [activeId, trailers, scrollToIndex]);
 
   // Active Slide Detection - using viewport intersection
   useEffect(() => {

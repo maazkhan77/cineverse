@@ -7,7 +7,6 @@ import { api } from "../../../convex/_generated/api";
 import { RatingModal } from "@/components/ui";
 import { toast } from "sonner";
 import styles from "../../app/tv/[id]/page.module.css";
-import { motion } from "framer-motion";
 
 interface TVInteractionsProps {
   tvId: number;

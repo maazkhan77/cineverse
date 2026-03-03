@@ -148,3 +148,35 @@ export const getAutocompleteSuggestions = query({
     return { recent, popular };
   },
 });
+
+// Save AI search history
+export const saveAiHistory = mutation({
+  args: {
+    query: v.string(),
+    results: v.array(
+      v.object({
+        tmdbId: v.union(v.number(), v.null()),
+        title: v.string(),
+        reason: v.string(),
+      })
+    ),
+  },
+  handler: async (ctx, { query, results }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return;
+
+    // Filter out null tmdbIds for the db schema
+    const validResults = results.filter(r => r.tmdbId !== null).map(r => ({
+      tmdbId: r.tmdbId as number,
+      title: r.title,
+      reason: r.reason,
+    }));
+
+    await ctx.db.insert("aiSearchHistory", {
+      userId,
+      query,
+      results: validResults,
+      createdAt: Date.now(),
+    });
+  },
+});

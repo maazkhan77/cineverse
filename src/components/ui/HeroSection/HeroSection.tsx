@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
-import { Magnetic } from "@/components/ui/Magnetic/Magnetic";
+
 import { Button3D } from "@/components/ui/Button3D/Button3D";
 import { TrailerModal } from "@/components/ui";
 import styles from "./HeroSection.module.css";

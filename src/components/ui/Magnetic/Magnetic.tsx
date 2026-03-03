@@ -7,9 +7,10 @@ interface MagneticProps {
   children: React.ReactNode;
   strength?: number; // How far it moves (pixels)
   className?: string;
+  disabled?: boolean;
 }
 
-export function Magnetic({ children, strength = 30, className = "" }: MagneticProps) {
+export function Magnetic({ children, disabled = false, className = "" }: MagneticProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
 

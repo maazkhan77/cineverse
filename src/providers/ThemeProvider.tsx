@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 
 type Theme = "dark" | "light";
 
@@ -14,27 +14,27 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const THEME_STORAGE_KEY = "canima-theme";
 
+function getInitialTheme(): Theme {
+  if (typeof window === "undefined") return "dark";
+  const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
+  if (savedTheme && (savedTheme === "dark" || savedTheme === "light")) {
+    return savedTheme;
+  }
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("dark");
+  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
   const [mounted, setMounted] = useState(false);
 
-  // Read theme from localStorage on mount
+  // Apply theme on initial mount
   useEffect(() => {
+    document.documentElement.dataset.theme = theme;
     setMounted(true);
-    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
-    if (savedTheme && (savedTheme === "dark" || savedTheme === "light")) {
-      setThemeState(savedTheme);
-      document.documentElement.dataset.theme = savedTheme;
-    } else {
-      // Check system preference
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const systemTheme = prefersDark ? "dark" : "light";
-      setThemeState(systemTheme);
-      document.documentElement.dataset.theme = systemTheme;
-    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Apply theme to document
+  // Apply theme to document on changes after mount
   useEffect(() => {
     if (mounted) {
       document.documentElement.dataset.theme = theme;
@@ -42,17 +42,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, [theme, mounted]);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     setThemeState((prev) => (prev === "dark" ? "light" : "dark"));
-  };
+  }, []);
 
-  const setTheme = (newTheme: Theme) => {
+  const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
-  };
+  }, []);
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
-      {/* Render children immediately but hide until theme is resolved to prevent layout shift */}
       <div style={{ visibility: mounted ? "visible" : "hidden" }}>
         {children}
       </div>

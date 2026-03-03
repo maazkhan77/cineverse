@@ -4,14 +4,23 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import { Volume2, VolumeX, X, Heart, Info, Star } from "lucide-react";
+import { Volume2, VolumeX, X, Heart, Info } from "lucide-react";
 import styles from "./CanimaSyncCard.module.css";
 
 // Dynamic import for ReactPlayer to avoid SSR issues
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false }) as any;
 
 interface CanimaSyncCardProps {
-  movie: any;
+  movie: {
+    title?: string;
+    overview?: string;
+    posterPath?: string | null;
+    voteAverage?: number;
+    releaseDate?: string;
+    runtime?: number;
+    videos?: { site: string; type: string; key: string }[];
+  };
   isActive: boolean;
   onVote: (vote: "like" | "dislike") => void;
   onInfo: () => void;
@@ -40,10 +49,10 @@ export function CanimaSyncCard({
   useEffect(() => {
     if (movie.videos) {
       const trailer = movie.videos.find(
-        (v: any) => v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
+        (v) => v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
       );
       if (trailer) {
-        setTrailerUrl(`https://www.youtube.com/watch?v=${trailer.key}`);
+        queueMicrotask(() => setTrailerUrl(`https://www.youtube.com/watch?v=${trailer.key}`));
       }
     }
   }, [movie]);
@@ -52,12 +61,14 @@ export function CanimaSyncCard({
   useEffect(() => {
     if (isActive && trailerUrl) {
       const timer = setTimeout(() => {
-        setShowVideo(true);
+        queueMicrotask(() => setShowVideo(true));
       }, 500); // 0.5s delay before trying to show video layer
       return () => clearTimeout(timer);
     } else {
-      setShowVideo(false);
-      setVideoReady(false);
+      queueMicrotask(() => {
+        setShowVideo(false);
+        setVideoReady(false);
+      });
     }
   }, [isActive, trailerUrl]);
 
@@ -97,7 +108,7 @@ export function CanimaSyncCard({
         {movie.posterPath ? (
            <Image
              src={`https://image.tmdb.org/t/p/original${movie.posterPath}`}
-             alt={movie.title}
+             alt={movie.title || "Movie Poster"}
              fill
              style={{objectFit: 'cover'}}
              priority={isActive}
@@ -113,7 +124,7 @@ export function CanimaSyncCard({
       {/* Content & Controls */}
       <div className={styles.contentLayer}>
         <div className={styles.header}>
-          <h2 className={styles.title}>{movie.title}</h2>
+          <h2 className={styles.title}>{movie.title || "Untitled"}</h2>
           <div className={styles.metaRow}>
             <div className={styles.ratingBadge}>
               {movie.voteAverage?.toFixed(1)}

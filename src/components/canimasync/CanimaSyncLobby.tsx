@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useAction, useMutation } from "convex/react";
+import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import styles from "./CanimaSyncLobby.module.css";
 import { motion } from "framer-motion";
-import { Users, Smartphone, Film, Zap, Copy, Check, ArrowRight } from "lucide-react";
+import { Smartphone, Film, Zap, ArrowRight } from "lucide-react";
 import { Button3D } from "../ui/Button3D/Button3D";
 import { Input } from "../ui/Input/Input";
 import { Label } from "../ui/Label/Label";
@@ -173,7 +173,7 @@ export function CanimaSyncLobby({ onJoin }: CanimaSyncLobbyProps) {
                         {  value: "join", label: "Join Game" }
                     ]}
                     value={mode}
-                    onChange={(v) => setMode(v as any)}
+                    onChange={(v) => setMode(v as "create" | "join")}
                 />
              </div>
 
@@ -201,7 +201,7 @@ export function CanimaSyncLobby({ onJoin }: CanimaSyncLobbyProps) {
                                 { value: "tv", label: <><Smartphone size={16} /> TV Shows</> }
                              ]}
                              value={mediaType}
-                             onChange={(v) => { setMediaType(v as any); setSelectedGenres([]); }}
+                             onChange={(v) => { setMediaType(v as "movie" | "tv"); setSelectedGenres([]); }}
                         />
                     </div>
 

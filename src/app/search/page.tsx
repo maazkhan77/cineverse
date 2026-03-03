@@ -11,6 +11,7 @@ import styles from "./page.module.css";
 import { Input } from "@/components/ui/Input/Input";
 import { SelectionChip } from "@/components/ui/SelectionChip/SelectionChip";
 import { SegmentedControl } from "@/components/ui/SegmentedControl/SegmentedControl";
+import Image from "next/image";
 
 interface TMDBResult {
   id: number;
@@ -82,6 +83,7 @@ function SearchPageContent() {
   );
   const popularSearches = useQuery(api.searchQueries.getPopularSearches, { limit: 5 });
   const saveSearchHistory = useMutation(api.searchQueries.saveSearchHistory);
+  const trackSearchHit = useMutation(api.stats.trackSearchHit);
   const recommendMovies = useAction(api.ai.recommendMovies);
   
   // Discovery actions (for advanced filters)
@@ -324,6 +326,7 @@ function SearchPageContent() {
   };
 
   const handleItemClick = (id: number, mediaType: "movie" | "tv") => {
+    trackSearchHit({ tmdbId: id, mediaType }).catch(console.error);
     router.push(`/${mediaType}/${id}`);
   };
 
@@ -350,16 +353,7 @@ function SearchPageContent() {
 
   const showDropdown = showSuggestions && (allSuggestions.length > 0 || (query.length < 2 && popularSearches && popularSearches.length > 0));
 
-  const handleMatch = (genreIds: number[]) => {
-    // Switch to discovery, set genres, and trigger search
-    setAdvancedFilters({
-      minRating: 0,
-      sortBy: "popularity.desc",
-      withGenres: genreIds.join(","),
-      maxRuntime: 0,
-    });
-    setSearchMode("regular");
-  };
+
 
   return (
     <>
@@ -425,7 +419,7 @@ function SearchPageContent() {
                 if (val === "canimasync") {
                   router.push("/canimasync");
                 } else {
-                  setSearchMode(val as any);
+                  setSearchMode(val as "regular" | "ai" | "canimasync");
                 }
               }}
               className="inline-flex"
@@ -582,10 +576,12 @@ function SearchPageContent() {
                     onClick={() => handleItemClick(item.id, item.media_type === "tv" ? "tv" : "movie")}
                   >
                     {item.poster_path && (
-                      <img
+                      <Image
                         src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
-                        alt={item.title || item.name}
+                        alt={item.title || item.name || "Poster"}
                         className={styles.trendingPoster}
+                        fill
+                        unoptimized
                       />
                     )}
                     <div className={styles.trendingInfo}>

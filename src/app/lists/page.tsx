@@ -5,7 +5,6 @@ import { useConvexAuth, useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { ContentModal } from "@/components/ui/ContentModal/ContentModal";
 import { MovieCard } from "@/components/ui/MovieCard";
-import { Magnetic } from "@/components/ui/Magnetic/Magnetic";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./page.module.css";

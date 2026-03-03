@@ -4,7 +4,7 @@ import { HeroSection, MoodTuner, MOOD_GENRES, Carousel, CarouselItem, TMDBBlocke
 import { BentoGrid } from "@/components/ui/BentoGrid/BentoGrid";
 import { MovieCard } from "@/components/ui/MovieCard";
 import { Skeleton } from "@/components/ui/Skeleton/Skeleton";
-import { useState, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import styles from "@/app/page.module.css";
@@ -50,10 +50,10 @@ export default function HomeContent() {
   const onTheAir = onTheAirData?.results ?? [];
 
   // Filter content by mood
-  const filterByMood = useMemo(() => {
+  const filterByMood = useCallback((items: TMDBResult[]) => {
     const moodGenres = MOOD_GENRES[activeMood as keyof typeof MOOD_GENRES];
-    if (moodGenres.length === 0) return (items: TMDBResult[]) => items;
-    return (items: TMDBResult[]) => items.filter(item => 
+    if (moodGenres.length === 0) return items;
+    return items.filter(item => 
       item.genre_ids?.some(id => moodGenres.includes(id))
     );
   }, [activeMood]);

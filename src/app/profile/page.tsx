@@ -59,6 +59,20 @@ export default function ProfilePage() {
     }
   }, [profile]);
 
+  if (isAuthLoading) {
+    return (
+      <main className={styles.main}>
+        <div className={styles.loading}>
+            <div className={styles.spinner} />
+        </div>
+      </main>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null; // The useEffect handles the redirect
+  }
+
   // Fetch genres
   useEffect(() => {
     async function fetchGenres() {

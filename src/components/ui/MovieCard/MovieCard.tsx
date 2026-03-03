@@ -1,14 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+
 import styles from "./MovieCard.module.css";
 import { useState, useRef, useEffect } from "react";
 import { MovieCardOverlay } from "./MovieCardOverlay";
 
 interface MovieCardProps {
   id: number;
-  title: string;
+  title?: string;
   posterPath: string | null;
   voteAverage: number;
   mediaType: "movie" | "tv";
@@ -27,7 +27,6 @@ export function MovieCard({
   releaseDate,
   onClick,
 }: MovieCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
   const [rect, setRect] = useState<DOMRect | null>(null);
   const cardRef = useRef<HTMLElement>(null);
@@ -59,7 +58,6 @@ export function MovieCard({
   }, [showOverlay]);
 
   const handleMouseEnter = () => {
-    setIsHovered(true);
     // Clear any pending close timer (if moving quickly between trigger and overlay)
     if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
     
@@ -75,7 +73,6 @@ export function MovieCard({
   };
 
   const handleMouseLeave = () => {
-     setIsHovered(false);
      if (timerRef.current) clearTimeout(timerRef.current);
 
      // Delay closing to allow entering the overlay
@@ -107,7 +104,7 @@ export function MovieCard({
         <div className={styles.imageWrapper}>
           <Image
             src={imageUrl}
-            alt={title}
+            alt={title || "Untitled"}
             fill
             sizes="(max-width: 480px) 50vw, (max-width: 768px) 33vw, (max-width: 1200px) 25vw, 20vw"
             className={styles.image}

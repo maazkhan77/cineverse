@@ -1,7 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import styles from "./TrailerModal.module.css";
 import { Button3D } from "@/components/ui/Button3D/Button3D";
 
@@ -11,18 +11,19 @@ interface TrailerModalProps {
 }
 
 export function TrailerModal({ trailerKey, onClose }: TrailerModalProps) {
-    const [mounted, setMounted] = useState(false);
+    const mountedRef = useRef(false);
 
+    // Side-effect only: lock body scroll while open
     useEffect(() => {
-        setMounted(true);
+        mountedRef.current = true;
         document.body.style.overflow = "hidden";
-        return () => { 
-            setMounted(false);
-            document.body.style.overflow = "unset" 
+        return () => {
+            mountedRef.current = false;
+            document.body.style.overflow = "unset";
         };
     }, []);
 
-    if (!mounted || typeof document === "undefined") return null;
+    if (typeof document === "undefined") return null;
 
     return createPortal(
         <div className={styles.trailerModal} onClick={onClose}>

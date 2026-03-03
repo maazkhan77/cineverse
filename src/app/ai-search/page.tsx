@@ -47,7 +47,7 @@ export default function AISearchPage() {
     setInputValue("");
 
     const userMsg: Message = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       role: "user",
       content: text,
     };
@@ -61,7 +61,7 @@ export default function AISearchPage() {
       // Create response with embedded movie cards
       const hasResults = recommendations.length > 0;
       const aiMsg: Message = {
-        id: (Date.now() + 1).toString(),
+        id: crypto.randomUUID(),
         role: "assistant",
         content: hasResults 
           ? `Here's what I found for "${text}":` 
@@ -77,7 +77,7 @@ export default function AISearchPage() {
       setIsLoading(false);
       
       const errorMsg: Message = {
-        id: (Date.now() + 1).toString(),
+        id: crypto.randomUUID(),
         role: "assistant",
         content: "Oops! Something went wrong. Make sure the AI is configured and try again.",
       };

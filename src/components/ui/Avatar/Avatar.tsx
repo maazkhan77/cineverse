@@ -57,6 +57,7 @@ export function Avatar({
       style={{ background: !src ? bgColor : undefined }}
     >
       {src ? (
+        // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt={alt} className={styles.image} />
       ) : (
         <span className={styles.initials}>{initials}</span>

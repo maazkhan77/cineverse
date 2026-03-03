@@ -47,9 +47,15 @@ export function Carousel({ title, children, className }: CarouselProps) {
 
   useEffect(() => {
     if (!emblaApi) return;
-    onSelect();
+    
+    // Defer initialization to avoid setting state during mount
+    requestAnimationFrame(() => {
+      onSelect();
+    });
+
     emblaApi.on("select", onSelect);
     emblaApi.on("reInit", onSelect);
+    
     return () => {
       emblaApi.off("select", onSelect);
       emblaApi.off("reInit", onSelect);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useConvexAuth, useQuery } from "convex/react";
+import { useConvexAuth, useQuery, useMutation } from "convex/react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -18,6 +18,7 @@ export function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const profile = useQuery(api.profiles.getMyProfile);
+  const ensureProfile = useMutation(api.profiles.ensureProfile);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Close on click outside
@@ -30,6 +31,13 @@ export function UserMenu() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Ensure profile is created
+  useEffect(() => {
+    if (isAuthenticated) {
+      ensureProfile().catch(console.error);
+    }
+  }, [isAuthenticated, ensureProfile]);
 
   if (isLoading) {
     return <div className={styles.skeleton} />;

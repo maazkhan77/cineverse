@@ -5,6 +5,19 @@ import { v } from "convex/values";
 
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 
+interface TMDBItem {
+  id: number;
+  media_type?: string;
+  [key: string]: unknown;
+}
+
+interface TMDBVideo {
+  site: string;
+  type: string;
+  key: string;
+  name: string;
+}
+
 // Helper to make TMDB API requests
 async function tmdbFetch(endpoint: string, params: Record<string, string> = {}) {
   const apiKey = process.env.TMDB_API_KEY;
@@ -40,7 +53,7 @@ export const getTrending = action({
     if (includeTrailers && data.results) {
       const topItems = data.results.slice(0, 6); // Enrich top 6 for Hero
       const enriched = await Promise.all(
-        topItems.map(async (item: any) => {
+        topItems.map(async (item: TMDBItem) => {
           try {
              // Skip if not movie/tv (e.g. person)
              if (item.media_type === "person") return item;
@@ -54,13 +67,13 @@ export const getTrending = action({
 
              // Prioritize official "Trailer" type, ensure it's on YouTube
              // STRICT: Only Trailers, no Teasers to avoid short clips.
-             const trailer = videos.find((v: any) => v.site === "YouTube" && v.type === "Trailer");
+             const trailer = videos.find((v: TMDBVideo) => v.site === "YouTube" && v.type === "Trailer");
 
              if (trailer) {
                return { ...item, trailerKey: trailer.key };
              }
              return item;
-          } catch (e) {
+          } catch {
             return item;
           }
         })
@@ -311,9 +324,9 @@ export const getFeaturedTrailers = action({
     let totalRawResults = 0; // Track how many results TMDB returned (before trailer enrichment)
     
     // Helper to enrich items with trailer data
-    const enrichWithTrailers = async (items: any[], type: "movie" | "tv") => {
+    const enrichWithTrailers = async (items: TMDBItem[], type: "movie" | "tv") => {
       return Promise.all(
-        items.map(async (item: any) => {
+        items.map(async (item: TMDBItem) => {
           try {
             const details = await tmdbFetch(`/${type}/${item.id}`, {
               append_to_response: "videos",
@@ -321,8 +334,8 @@ export const getFeaturedTrailers = action({
             
             const videos = details.videos?.results || [];
             const trailer = videos.find(
-              (v: any) => v.site === "YouTube" && v.type === "Trailer"
-            ) || videos.find((v: any) => v.site === "YouTube" && v.type === "Teaser");
+              (v: TMDBVideo) => v.site === "YouTube" && v.type === "Trailer"
+            ) || videos.find((v: TMDBVideo) => v.site === "YouTube" && v.type === "Teaser");
 
             if (!trailer) return null;
 
@@ -340,7 +353,7 @@ export const getFeaturedTrailers = action({
       );
     };
 
-    let allResults: any[] = [];
+    let allResults: (TMDBItem | null)[] = [];
 
     // Fetch based on mediaType filter
     if (mediaType === "movie" || mediaType === "all") {
@@ -420,10 +433,10 @@ export const getTrailer = action({
       
       const videos = details.videos?.results || [];
       // STRICT: Only Trailers
-      const trailer = videos.find((v: any) => v.site === "YouTube" && v.type === "Trailer");
+      const trailer = videos.find((v: TMDBVideo) => v.site === "YouTube" && v.type === "Trailer");
       
       return trailer ? trailer.key : null;
-    } catch (e) {
+    } catch {
       return null;
     }
   },

@@ -3,6 +3,7 @@
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 import Groq from "groq-sdk";
+import { api } from "./_generated/api";
 
 interface TMDBSearchResult {
   id: number;
@@ -57,7 +58,7 @@ async function searchTMDB(title: string, year?: number): Promise<TMDBSearchResul
 
 export const recommendMovies = action({
   args: { query: v.string() },
-  handler: async (_, { query }) => {
+  handler: async (ctx, { query }) => {
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
       throw new Error("GROQ_API_KEY is not set");
@@ -114,6 +115,12 @@ Example format:
         };
       })
     );
+
+    // Save AI search history
+    await ctx.runMutation(api.searchQueries.saveAiHistory, {
+      query,
+      results: enrichedRecommendations,
+    });
 
     return { recommendations: enrichedRecommendations };
   },

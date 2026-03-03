@@ -1,7 +1,7 @@
-import { mutation, query, internalMutation } from "./_generated/server";
+import { mutation, query, internalMutation, type MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { internal } from "./_generated/api";
+
 
 /**
  * User Ratings System
@@ -219,11 +219,10 @@ export const deleteRating = mutation({
   },
 });
 
-// Internal helper to update community rating aggregates
-async function updateAggregateRating(ctx: any, tmdbId: number, mediaType: "movie" | "tv") {
+async function updateAggregateRating(ctx: MutationCtx, tmdbId: number, mediaType: "movie" | "tv") {
   const ratings = await ctx.db
     .query("userRatings")
-    .withIndex("by_content", (q: any) =>
+    .withIndex("by_content", (q) =>
       q.eq("tmdbId", tmdbId).eq("mediaType", mediaType)
     )
     .collect();
@@ -232,7 +231,7 @@ async function updateAggregateRating(ctx: any, tmdbId: number, mediaType: "movie
     // Remove aggregate if no ratings left
     const existing = await ctx.db
       .query("communityRatings")
-      .withIndex("by_content", (q: any) =>
+      .withIndex("by_content", (q) =>
         q.eq("tmdbId", tmdbId).eq("mediaType", mediaType)
       )
       .first();
@@ -243,7 +242,7 @@ async function updateAggregateRating(ctx: any, tmdbId: number, mediaType: "movie
     return;
   }
 
-  const sum = ratings.reduce((acc: number, r: any) => acc + r.rating, 0);
+  const sum = ratings.reduce((acc: number, r: { rating: number }) => acc + r.rating, 0);
   const average = sum / ratings.length;
   
   // Calculate distribution
@@ -252,7 +251,7 @@ async function updateAggregateRating(ctx: any, tmdbId: number, mediaType: "movie
     rating6: 0, rating7: 0, rating8: 0, rating9: 0, rating10: 0,
   };
   
-  ratings.forEach((r: any) => {
+  ratings.forEach((r: { rating: number }) => {
     const key = `rating${r.rating}` as keyof typeof distribution;
     if (distribution[key] !== undefined) {
       distribution[key]++;
@@ -261,7 +260,7 @@ async function updateAggregateRating(ctx: any, tmdbId: number, mediaType: "movie
 
   const existing = await ctx.db
     .query("communityRatings")
-    .withIndex("by_content", (q: any) =>
+    .withIndex("by_content", (q) =>
       q.eq("tmdbId", tmdbId).eq("mediaType", mediaType)
     )
     .first();

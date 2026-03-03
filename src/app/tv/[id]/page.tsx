@@ -28,7 +28,7 @@ export default async function TVDetailPage({ params }: { params: Promise<{ id: s
   }
 
   const { details, cast, similar, trailer } = data;
-  const regularSeasons = details.seasons?.filter((s: any) => s.season_number > 0) || [];
+  const regularSeasons = details.seasons?.filter((s: { season_number: number }) => s.season_number > 0) || [];
 
   return (
     <main className={styles.main}>
@@ -38,7 +38,7 @@ export default async function TVDetailPage({ params }: { params: Promise<{ id: s
             <div className={styles.backdropWrapper}>
                 <Image
                 src={`https://image.tmdb.org/t/p/original${details.backdrop_path}`}
-                alt={details.name}
+                alt={details.name || "TV show backdrop"}
                 fill
                 className={styles.backdrop}
                 priority
@@ -62,7 +62,7 @@ export default async function TVDetailPage({ params }: { params: Promise<{ id: s
               <div className={styles.poster}>
                 <Image
                   src={`https://image.tmdb.org/t/p/w500${details.poster_path}`}
-                  alt={details.name}
+                  alt={details.name || "TV show poster"}
                   width={200}
                   height={300}
                   className={styles.posterImage}
@@ -91,7 +91,7 @@ export default async function TVDetailPage({ params }: { params: Promise<{ id: s
               </div>
 
               <div className={styles.genres}>
-                {details.genres?.map((g: any) => (
+                {details.genres?.map((g: { id: number; name: string }) => (
                   <span key={g.id} className={styles.genre}>
                     {g.name}
                   </span>
@@ -103,7 +103,7 @@ export default async function TVDetailPage({ params }: { params: Promise<{ id: s
               {/* Client Interactions */}
               <MovieInteractions 
                 movieId={details.id}
-                movieTitle={details.name}
+                movieTitle={details.name || ""}
                 posterPath={details.poster_path}
                 voteAverage={details.vote_average}
                 mediaType="tv"
@@ -133,7 +133,7 @@ export default async function TVDetailPage({ params }: { params: Promise<{ id: s
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Cast</h2>
               <div className={styles.castScroll}>
-                {cast.map((person: any) => (
+                {cast.map((person) => (
                   <Link
                     href={`/person/${person.id}`}
                     key={person.id}
@@ -197,11 +197,11 @@ export default async function TVDetailPage({ params }: { params: Promise<{ id: s
                     : "Ongoing"}
                 </span>
               </div>
-              {details.created_by?.length > 0 && (
+              {(details.created_by?.length ?? 0) > 0 && (
                 <div className={styles.detailItem}>
                   <span className={styles.detailLabel}>Created By</span>
                   <span className={styles.detailValue}>
-                    {details.created_by.map((c: any) => c.name).join(", ")}
+                    {details.created_by?.map((c: { name: string }) => c.name).join(", ")}
                   </span>
                 </div>
               )}
@@ -213,7 +213,7 @@ export default async function TVDetailPage({ params }: { params: Promise<{ id: s
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>More Like This</h2>
               <div className={styles.similarGrid}>
-                {similar.map((show: any) => (
+                {similar.map((show) => (
                     <div key={show.id} style={{ position: 'relative' }}>
                          <Link href={`/tv/${show.id}`} className="absolute inset-0 z-0" aria-label={show.name} />
                         <MovieCard

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
 import { MovieCard } from "../MovieCard";
 import styles from "./ContentRow.module.css";
 

@@ -135,3 +135,30 @@ export const updateAvatar = mutation({
     }
   },
 });
+
+// Ensure a profile exists for the user
+export const ensureProfile = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return;
+
+    const existingProfile = await ctx.db
+      .query("userProfiles")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first();
+
+    if (!existingProfile) {
+      const user = await ctx.db.get(userId);
+      const timestamp = Date.now();
+      await ctx.db.insert("userProfiles", {
+        userId,
+        displayName: user?.name,
+        avatarUrl: user?.image,
+        isProfilePublic: true,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      });
+    }
+  },
+});

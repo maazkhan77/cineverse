@@ -28,6 +28,30 @@ export const add = mutation({
       return existing._id;
     }
 
+    // Track watchlist addition in stats
+    const statExisting = await ctx.db
+      .query("contentStats")
+      .withIndex("by_content", (q) =>
+        q.eq("tmdbId", args.tmdbId).eq("mediaType", args.mediaType)
+      )
+      .first();
+
+    if (statExisting) {
+      await ctx.db.patch(statExisting._id, {
+        watchlistAdds: statExisting.watchlistAdds + 1,
+        lastUpdated: Date.now(),
+      });
+    } else {
+      await ctx.db.insert("contentStats", {
+        tmdbId: args.tmdbId,
+        mediaType: args.mediaType,
+        views: 0,
+        watchlistAdds: 1,
+        searchHits: 0,
+        lastUpdated: Date.now(),
+      });
+    }
+
     return ctx.db.insert("watchlist", {
       userId,
       tmdbId: args.tmdbId,

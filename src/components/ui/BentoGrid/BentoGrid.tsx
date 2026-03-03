@@ -4,8 +4,24 @@ import Image from "next/image";
 import Link from "next/link";
 import styles from "./BentoGrid.module.css";
 
+interface BentoGridItem {
+  id: number;
+  title?: string | null;
+  name?: string | null;
+  backdrop_path?: string | null;
+  backdropPath?: string | null;
+  poster_path?: string | null;
+  posterPath?: string | null;
+  release_date?: string | null;
+  releaseDate?: string | null;
+  first_air_date?: string | null;
+  vote_average?: number | null;
+  voteAverage?: number | null;
+  media_type?: string | null;
+}
+
 interface BentoItemProps {
-  movie: any;
+  movie: BentoGridItem;
   variant?: "hero" | "vertical" | "wide" | "standard";
   priority?: boolean;
 }
@@ -61,7 +77,7 @@ function BentoItem({ movie, variant = "standard", priority = false }: BentoItemP
 }
 
 interface BentoGridProps {
-  movies: any[];
+  movies: BentoGridItem[];
 }
 
 export function BentoGrid({ movies }: BentoGridProps) {

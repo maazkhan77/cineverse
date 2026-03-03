@@ -18,7 +18,7 @@ class FingerprintErrorBoundary extends Component<FingerprintErrorBoundaryProps, 
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(_: Error): FingerprintErrorBoundaryState {
+  static getDerivedStateFromError(): FingerprintErrorBoundaryState {
     return { hasError: true };
   }
 

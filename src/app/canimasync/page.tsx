@@ -7,13 +7,27 @@ import { CanimaSyncLobby } from "@/components/canimasync/CanimaSyncLobby";
 import { CanimaSyncWaitingRoom } from "@/components/canimasync/CanimaSyncWaitingRoom";
 import { CanimaSyncSwipe } from "@/components/canimasync/CanimaSyncSwipe";
 import { CanimaSyncResults } from "@/components/canimasync/CanimaSyncResults";
-import { useRouter } from "next/navigation";
+
+// Local types to match component expected props
+interface CanimaParticipant {
+  userId: string;
+  name?: string;
+  isHost?: boolean;
+}
+
+interface CanimaCard {
+  tmdbId: number;
+  title?: string;
+  posterPath?: string | null;
+  overview?: string;
+  releaseDate?: string;
+  voteAverage?: number;
+}
 
 export default function CanimaSyncPage() {
   const [roomId, setRoomId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [isHost, setIsHost] = useState(false);
-  const router = useRouter();
 
   // All handlers defined at the top — before any conditional returns (#9)
   const handleExit = useCallback(() => {
@@ -72,8 +86,8 @@ export default function CanimaSyncPage() {
     }
   }, [roomId, roomState, handleExit]);
 
-  const [movieCards, setMovieCards] = useState<any[]>([]);
-  const [sessionLikes, setSessionLikes] = useState<any[]>([]);
+  const [movieCards, setMovieCards] = useState<CanimaCard[]>([]);
+  const [sessionLikes, setSessionLikes] = useState<CanimaCard[]>([]);
   const [loadedUpTo, setLoadedUpTo] = useState(0);
   const [isLoadingMovies, setIsLoadingMovies] = useState(false);
 
@@ -124,14 +138,15 @@ export default function CanimaSyncPage() {
     }
   };
 
-  const handleVote = async (tmdbId: number, vote: "like" | "dislike", details: any) => {
+  const handleVote = async (tmdbId: number, vote: "like" | "dislike", details: { title?: string; posterPath?: string | null; releaseDate?: string }) => {
     if (roomId && userId) {
+      const finalTitle = details.title || "Untitled";
       if (vote === "like") {
-        setSessionLikes(prev => [...prev, { ...details, tmdbId }]);
+        setSessionLikes(prev => [...prev, { ...details, title: finalTitle, tmdbId }]);
       }
       const safeDetails = {
-        title: details.title,
-        posterPath: details.posterPath,
+        title: finalTitle,
+        posterPath: details.posterPath || undefined,
         releaseDate: details.releaseDate
       };
       await submitVote({ roomId, userId, tmdbId, vote, movieDetails: safeDetails });
@@ -190,9 +205,11 @@ export default function CanimaSyncPage() {
     return (
       <CanimaSyncWaitingRoom 
         roomId={roomId}
-        participants={roomState.participants.map((p: any) => ({
+        participants={roomState.participants.map((p: Partial<CanimaParticipant>) => ({
           ...p,
-          userId: p.userId || "unknown"
+          userId: p.userId || "unknown",
+          name: p.name || "Guest",
+          isHost: p.isHost || false
         }))}
         isHost={isHost}
         onStart={handleStart}

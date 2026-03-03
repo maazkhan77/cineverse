@@ -55,22 +55,14 @@ export function TrailerSlide({ trailer, isActive, isMuted, onToggleMute }: Trail
       } else {
         await addToWatchlist({
           tmdbId: trailer.id,
-          mediaType: "movie", // TrailerFeed currently fetches movies/tv but TrailerData doesn't distinguish?
-          // Wait, TrailerData has 'media_type'?
-          // In `tmdb.ts` getFeaturedTrailers, we map item.media_type.
-          // BUT TrailerData interface in this file (lines 8-19) DOES NOT have media_type.
-          // I need to add it to TrailerData interface in `page.tsx` or here.
-          // Let's assume 'movie' for now or Fix Interface.
-          // Looking at page.tsx (Step 1407), it casts `data.results as unknown as TrailerData[]`.
-          // `tmdb.ts` returns `{ ...item, media_type: type ... }`.
-          // So the data HAS media_type. I should update Interface.
+          mediaType: (trailer.media_type || "movie") as "movie" | "tv",
           title: trailer.title || trailer.name || "Unknown",
           posterPath: trailer.poster_path || undefined,
           voteAverage: trailer.vote_average || 0,
-        } as any); // cast as any to bypass strict type check if interface missing
+        });
         toast.success("Added to watchlist");
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to update watchlist");
     }
   };
@@ -86,7 +78,7 @@ export function TrailerSlide({ trailer, isActive, isMuted, onToggleMute }: Trail
     if (navigator.share) {
       try {
         await navigator.share(shareData);
-      } catch (err) {
+      } catch {
         // Ignore abort
       }
     } else {

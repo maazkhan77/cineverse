@@ -39,31 +39,21 @@ export default function SeriesContent() {
   const searchParams = useSearchParams();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const selectedRegions = useUIStore((s) => s.selectedRegions);
-  const [filters, setFilters] = useState<FilterState>({
+  // Initialize filters from URL query params (from navbar genre links)
+  const initialGenre = searchParams.get("genre");
+  const initialSort = searchParams.get("sort");
+
+  const [filters, setFilters] = useState<FilterState>(() => ({
     minRating: 0,
-    sortBy: "popularity.desc",
-    withGenres: "",
-  });
+    sortBy: initialSort || "popularity.desc",
+    withGenres: initialGenre || "",
+  }));
 
   // Sync global region store into filters
   const activeFilters = useMemo(() => ({
     ...filters,
     region: selectedRegions[0] || "IN",
   }), [filters, selectedRegions]);
-
-  // Sync URL query params (from navbar genre links) into filter state
-  useEffect(() => {
-    const genre = searchParams.get("genre");
-    const sort = searchParams.get("sort");
-
-    if (genre || sort) {
-      setFilters((prev) => ({
-        ...prev,
-        withGenres: genre || prev.withGenres,
-        sortBy: sort || prev.sortBy,
-      }));
-    }
-  }, [searchParams]);
 
   // TanStack Query for infinite scrolling
   const {

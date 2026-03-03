@@ -5,6 +5,7 @@ import { api } from "../../../../convex/_generated/api";
 import { StarRating } from "../StarRating";
 import styles from "./ReviewList.module.css";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 interface ReviewListProps {
   tmdbId: number;
@@ -38,7 +39,7 @@ export function ReviewList({ tmdbId, mediaType }: ReviewListProps) {
               <div className={styles.userInfo}>
                 <div className={styles.avatar}>
                   {review.userImage ? (
-                    <img src={review.userImage} alt={review.userName} />
+                    <Image src={review.userImage} alt={review.userName} width={32} height={32} className={styles.avatarImg} />
                   ) : (
                     <span className={styles.avatarPlaceholder}>
                       {review.userName.charAt(0).toUpperCase()}
