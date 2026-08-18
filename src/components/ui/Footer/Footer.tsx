@@ -6,7 +6,7 @@ import styles from "./Footer.module.css";
 export function Footer() {
   const pathname = usePathname();
 
-  if (pathname === "/ai-search") return null;
+  if (pathname === "/ai-search" || pathname === "/login") return null;
 
   return (
     <footer className={styles.footer}>

@@ -51,16 +51,18 @@
   font-family: var(--font-display);
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: var(--font-bold);
-  color: var(--color-text-on-surface);
+  color: #ffffff;
   margin-bottom: var(--space-4);
   line-height: 1.1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .heroSubtitle {
   font-size: var(--text-lg);
-  color: var(--color-text-on-surface-muted);
+  color: rgba(255, 255, 255, 0.85);
   max-width: 400px;
   line-height: 1.6;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
 }
 
 .featureList {
@@ -75,7 +77,8 @@
   align-items: center;
   gap: var(--space-3);
   font-size: var(--text-base);
-  color: var(--color-text-on-surface);
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
 .featureIcon {
@@ -84,10 +87,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(229, 9, 20, 0.2);
+  background: rgba(229, 9, 20, 0.35);
   border-radius: 50%;
-  color: var(--color-accent);
+  color: #ffffff;
   font-size: 12px;
+  font-weight: bold;
 }
 
 /* ============ RIGHT PANEL - AUTH SECTION ============ */
@@ -182,7 +186,7 @@
 .dividerLine {
   flex: 1;
   height: 1px;
-  background: var(--color-glass-border);
+  background: var(--color-border);
 }
 
 .dividerText {
