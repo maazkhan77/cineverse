@@ -31,32 +31,33 @@
 }
 
 .avatar.user {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
 }
 
 .avatar.assistant {
   background: linear-gradient(135deg, var(--color-accent), #ff6b6b);
-  color: white;
-  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(var(--color-accent-rgb), 0.3);
 }
 
 .messageContent {
   flex: 1;
   font-size: 1rem;
   line-height: 1.7;
-  color: #e5e5e5;
+  color: var(--color-text);
 }
 
 .messageContent strong {
-  color: white;
+  color: var(--color-text);
   font-weight: 600;
 }
 
 /* User messages get a subtle background */
 .messageRow.user .messageContent {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   padding: 1rem 1.25rem;
   border-radius: 16px;
   border-bottom-left-radius: 4px;
@@ -91,8 +92,8 @@
 }
 
 .movieCard {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   overflow: hidden;
   transition: all 0.2s ease;
@@ -100,14 +101,14 @@
 }
 
 .movieCard:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-hover);
   transform: translateY(-2px);
 }
 
 .moviePoster {
   aspect-ratio: 2/3;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--color-bg-secondary);
   position: relative;
 }
 
@@ -118,7 +119,7 @@
 .movieTitle {
   font-size: 0.85rem;
   font-weight: 600;
-  color: white;
+  color: var(--color-text);
   margin-bottom: 0.25rem;
   white-space: nowrap;
   overflow: hidden;
@@ -127,7 +128,7 @@
 
 .movieYear {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-muted);
 }
 
 /* Responsive */

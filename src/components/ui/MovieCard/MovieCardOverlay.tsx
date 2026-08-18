@@ -126,63 +126,39 @@ export function MovieCardOverlay({ isOpen, rect, movie, onClose, onMouseEnter, o
      );
   }
 
-  // Center alignment logic (Strict Centering)
-  // This ensures the expanded card overlaps the trigger logic in all directions
-  // Variables strictly declared once
-  
-  const centerX = rect.left + rect.width / 2;
-  const centerY = rect.top + rect.height / 2;
-  
-  // Base calculations
-  const scale = 1.5;
-  const width = rect.width * scale;
-  const height = width * (movie.backdropPath ? 0.5625 : 1.5); // Approx height based on aspect ratio
-  
-  let left = centerX - width / 2;
-  let top = centerY - (rect.height * scale) / 2; 
+  // Dimensions matching the home card exactly
+  const width = rect.width;
+  const imageHeight = rect.height;
+  const contentHeight = 110;
+  const totalHeight = imageHeight + contentHeight;
 
-  // Smart Viewport Clamping
-  // We need to ensure the overlay stays effectively ON TOP of the trigger (so mouse doesn't leave),
-  // but also ON SCREEN.
-  
-  const padding = 20; // Padding from edge of screen
+  let left = rect.left;
+  let top = rect.top;
+
+  const padding = 16;
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
 
-  // Check Right Edge
+  // Clamp horizontal edges
   if (left + width > viewportWidth - padding) {
       left = viewportWidth - width - padding;
   }
-  // Check Left Edge
   if (left < padding) {
       left = padding;
   }
 
-  // Check Bottom Edge (Most common issue)
-  
-  if (rect.bottom > viewportHeight - 150) { 
-     // Safer: Just clamp it.
-     const predictedBottom = top + height + 100; // Extra buffer for text
-     if (predictedBottom > viewportHeight - padding) {
-         top = viewportHeight - height - 100 - padding;
-     }
+  // Clamp vertical edges (ensure bottommost cards don't get cut off)
+  if (top + totalHeight > viewportHeight - padding) {
+      top = viewportHeight - totalHeight - padding;
+  }
+  if (top < padding + 70) {
+      top = padding + 70;
   }
 
-  // Check Top Edge
-  if (top < padding + 60) { // +60 for Navbar clearance usually
-      top = padding + 60;
-  }
-
-  // Use camelCase properties (already normalized by parent)
-  const backdrop = movie.backdropPath;
   const poster = movie.posterPath;
-  const hasImage = backdrop || poster;
-
-  const imageUrl = backdrop 
-    ? `https://image.tmdb.org/t/p/w780${backdrop}`
-    : poster 
-      ? `https://image.tmdb.org/t/p/w500${poster}`
-      : null;
+  const imageUrl = poster 
+    ? `https://image.tmdb.org/t/p/w500${poster}`
+    : "/placeholder-poster.png";
 
   const title = movie.title || "Unknown";
   const year = movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : null;
@@ -200,49 +176,44 @@ export function MovieCardOverlay({ isOpen, rect, movie, onClose, onMouseEnter, o
             onMouseEnter={onMouseEnter}
             onMouseLeave={onClose}
             style={{
-               position: 'absolute', // Ensure framer-motion respects this
+               position: 'absolute',
             }}
             initial={{ 
               opacity: 0, 
               width: rect.width, 
               height: rect.height,
               top: rect.top,
-              left: rect.left
+              left: rect.left,
+              scale: 0.98
             }}
             animate={{ 
               opacity: 1, 
               width: width, 
               height: "auto", 
-              top: top, // Strictly centered
+              top: top,
               left: left,
               scale: 1,
-              transition: { duration: 0.2, ease: "easeOut" }
+              transition: { duration: 0.18, ease: "easeOut" }
             }}
             exit={{ 
               opacity: 0,
-              scale: 0.95, // Shrink slightly on exit
-              transition: { duration: 0.15 }
+              scale: 0.96,
+              transition: { duration: 0.12 }
             }}
             onClick={(e) => {
               e.stopPropagation();
               onClick();
             }}
           >
-            {/* Image Section */}
-            <div 
-              className={styles.imageWrapper}
-              data-orientation={backdrop ? "landscape" : "portrait"}
-              style={!hasImage ? { background: 'linear-gradient(135deg, #1a1a2e, #16213e)', minHeight: '150px' } : {}}
-            >
-              {hasImage && imageUrl && (
-                <Image
-                  src={imageUrl}
-                  alt={title}
-                  fill
-                  className={styles.image}
-                  sizes="400px"
-                />
-              )}
+            {/* Image Section - Exactly identical to home card */}
+            <div className={styles.imageWrapper}>
+              <Image
+                src={imageUrl}
+                alt={title}
+                fill
+                className={styles.image}
+                sizes="300px"
+              />
             </div>
 
             {/* Content Section */}
@@ -256,7 +227,7 @@ export function MovieCardOverlay({ isOpen, rect, movie, onClose, onMouseEnter, o
                      if (trailerKey) {
                         setShowTrailer(true);
                      } else {
-                        onClick(); // Fallback to navigate
+                        onClick();
                      }
                    }}
                  >
@@ -287,7 +258,7 @@ export function MovieCardOverlay({ isOpen, rect, movie, onClose, onMouseEnter, o
 
               <div className={styles.header}>
                 <div>
-                   <h2 className={styles.overlayTitle}>{movie.title || "Untitled"}</h2>
+                   <h2 className={styles.title}>{movie.title || "Untitled"}</h2>
                    <div className={styles.meta}>
                     <span className={styles.match}>{matchScore}% Match</span>
                     <span>{year}</span>

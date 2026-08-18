@@ -4,24 +4,24 @@
   min-height: 80px;
   width: 100%;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-input-border);
+  background: var(--color-input-bg);
   padding: 12px 16px;
   font-size: var(--text-base);
-  color: white;
+  color: var(--color-input-text);
   transition: all 0.2s ease;
   font-family: var(--font-sans);
   resize: vertical;
 }
 
 .textarea::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--color-input-placeholder);
 }
 
 .textarea:focus {
   outline: none;
   border-color: var(--color-accent);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--color-input-focus-bg);
   box-shadow: 0 0 0 4px var(--color-accent-subtle);
 }
 
@@ -32,5 +32,5 @@
 
 .error {
   border-color: var(--color-error);
-  box-shadow: 0 0 0 4px rgba(255, 68, 68, 0.1);
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.15);
 }

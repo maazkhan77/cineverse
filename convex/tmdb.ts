@@ -91,10 +91,9 @@ export const getMovies = action({
   args: {
     page: v.optional(v.number()),
     genreIds: v.optional(v.string()),
-    region: v.optional(v.string()),
     maxRuntime: v.optional(v.number()),
   },
-  handler: async (_, { page = 1, genreIds, region, maxRuntime }) => {
+  handler: async (_, { page = 1, genreIds, maxRuntime }) => {
     const params: Record<string, string> = {
       page: String(page),
       language: "en-US",
@@ -103,10 +102,6 @@ export const getMovies = action({
     };
     if (genreIds) {
       params.with_genres = genreIds;
-    }
-    if (region) {
-      params.region = region;
-      params.watch_region = region;
     }
     if (maxRuntime) {
       params["with_runtime.lte"] = String(maxRuntime);
@@ -119,10 +114,9 @@ export const getSeries = action({
   args: {
     page: v.optional(v.number()),
     genreIds: v.optional(v.string()),
-    region: v.optional(v.string()),
     maxRuntime: v.optional(v.number()),
   },
-  handler: async (_, { page = 1, genreIds, region, maxRuntime }) => {
+  handler: async (_, { page = 1, genreIds, maxRuntime }) => {
     const params: Record<string, string> = {
       page: String(page),
       language: "en-US",
@@ -130,9 +124,6 @@ export const getSeries = action({
     };
     if (genreIds) {
       params.with_genres = genreIds;
-    }
-    if (region) {
-      params.watch_region = region;
     }
     if (maxRuntime) {
       params["with_runtime.lte"] = String(maxRuntime);

@@ -1,5 +1,6 @@
 "use client";
 
+import { Sparkles, User } from "lucide-react";
 import styles from "./ChatStream.module.css";
 import { AIMovieGrid, EnrichedMovie } from "./AIMovieCard";
 
@@ -37,7 +38,11 @@ export function ChatStream({ messages }: ChatStreamProps) {
       {messages.map((msg) => (
         <div key={msg.id} className={`${styles.messageRow} ${styles[msg.role]}`}>
           <div className={`${styles.avatar} ${styles[msg.role]}`}>
-            {msg.role === "user" ? "U" : "✨"}
+            {msg.role === "user" ? (
+              <User size={16} />
+            ) : (
+              <Sparkles size={16} />
+            )}
           </div>
           
           <div className={styles.messageContent}>

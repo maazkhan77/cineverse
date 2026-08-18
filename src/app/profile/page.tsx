@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useAction, useConvexAuth } from "convex/react";
 import { useRouter } from "next/navigation";
 import { api } from "../../../convex/_generated/api";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import styles from "./page.module.css";
 import Image from "next/image";
@@ -14,7 +13,7 @@ import { Textarea } from "@/components/ui/Textarea/Textarea";
 import { Button3D } from "@/components/ui/Button3D/Button3D";
 import { SelectionChip } from "@/components/ui/SelectionChip/SelectionChip";
 import { Avatar } from "@/components/ui/Avatar/Avatar";
-import { Edit2, Mail, Calendar, Film, Star } from "lucide-react";
+import { Edit2, Mail, Calendar, Star } from "lucide-react";
 
 interface Genre {
   id: number;
@@ -59,6 +58,20 @@ export default function ProfilePage() {
     }
   }, [profile]);
 
+  // Fetch genres
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    async function fetchGenres() {
+      try {
+        const data = await getGenres({ mediaType: "movie" });
+        setAllGenres((data as { genres: Genre[] }).genres);
+      } catch (err) {
+        console.error("Failed to fetch genres", err);
+      }
+    }
+    fetchGenres();
+  }, [getGenres, isAuthenticated]);
+
   if (isAuthLoading) {
     return (
       <main className={styles.main}>
@@ -72,19 +85,6 @@ export default function ProfilePage() {
   if (!isAuthenticated) {
     return null; // The useEffect handles the redirect
   }
-
-  // Fetch genres
-  useEffect(() => {
-    async function fetchGenres() {
-      try {
-        const data = await getGenres({ mediaType: "movie" });
-        setAllGenres((data as { genres: Genre[] }).genres);
-      } catch (err) {
-        console.error("Failed to fetch genres", err);
-      }
-    }
-    fetchGenres();
-  }, [getGenres]);
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();

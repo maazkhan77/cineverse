@@ -25,7 +25,7 @@ interface WatchProvidersProps {
 }
 
 export const WatchProviders = ({ providers, region = "US" }: WatchProvidersProps) => {
-  const regionData = providers?.results?.[region];
+  const regionData = providers?.results?.[region] || (providers?.results ? Object.values(providers.results).find(r => r?.flatrate && r.flatrate.length > 0) : undefined);
 
   if (!regionData || !regionData.flatrate || regionData.flatrate.length === 0) {
     return null;

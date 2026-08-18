@@ -47,20 +47,20 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-4);
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--color-surface);
   backdrop-filter: blur(10px);
   color: var(--color-text);
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
   border-radius: var(--radius-full);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-border);
   z-index: 20;
   transition: all var(--transition-fast);
 }
 
 .backNav:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-hover);
 }
 
 /* Hero Content Layout - Magazine Style */
@@ -86,7 +86,6 @@
 .posterImage {
   border-radius: var(--radius-sm);
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
-  /* Removed tilt as per user request */
   transition: transform 0.4s ease;
 }
 
@@ -97,10 +96,8 @@
 /* Hero Info - Standard Magazine Layout */
 .heroInfo {
   flex: 1;
-  max-width: 1200px; /* Increased to 1200px */
+  max-width: 1200px;
 }
-
-/* ... existing styles ... */
 
 /* Action Buttons */
 .actions {
@@ -115,15 +112,19 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-4);
-  background: var(--color-text);
-  color: var(--color-bg);
+  background: var(--color-accent);
+  color: var(--color-text-on-accent, #ffffff);
   font-family: var(--font-sans);
   font-size: var(--text-xs);
   font-weight: var(--font-semibold);
   letter-spacing: 0.02em;
   border-radius: var(--radius-md);
-  white-space: nowrap; /* Prevent text wrapping */
+  white-space: nowrap;
   transition: all var(--transition-fast);
+}
+
+.playButton:hover {
+  background: var(--color-accent-hover);
 }
 
 .title {
@@ -132,10 +133,9 @@
   font-weight: var(--font-bold);
   line-height: 1.1;
   letter-spacing: -0.02em;
-  color: white;
+  color: var(--color-text);
   margin-left: 0;
-  margin-bottom: var(--space-6); /* Increased from space-4 */
-  text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  margin-bottom: var(--space-6);
   position: relative;
   z-index: 10;
 }
@@ -166,16 +166,16 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.3);
+  background: var(--color-border);
 }
 
 .overview {
   font-family: var(--font-sans);
   font-size: var(--text-lg);
   line-height: 1.8;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--color-text-secondary);
   max-width: 650px;
-  margin-bottom: var(--space-10); /* Increased from space-8 */
+  margin-bottom: var(--space-10);
   font-weight: 300;
 }
 
@@ -185,8 +185,8 @@
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-6);
   padding: var(--space-6);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
 }
 
@@ -216,21 +216,21 @@
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-2) var(--space-3);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-surface);
   backdrop-filter: blur(10px);
   color: var(--color-text);
   font-family: var(--font-sans);
   font-size: var(--text-xs);
   font-weight: var(--font-medium);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  white-space: nowrap; /* Prevent text wrapping */
+  white-space: nowrap;
   transition: all var(--transition-fast);
 }
 
 .secondaryButton:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-hover);
 }
 
 /* ============ CONTENT SECTION ============ */
@@ -261,14 +261,14 @@
   overflow-x: auto;
   padding-bottom: var(--space-4);
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
 .castCard {
   min-width: 140px;
   width: 140px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   overflow: hidden;
   transition: transform 0.2s, background 0.2s;
@@ -276,8 +276,8 @@
 
 .castCard:hover {
   transform: translateY(-4px);
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-hover);
 }
 
 .castImage {
@@ -286,7 +286,7 @@
   aspect-ratio: 2/3;
   margin: 0;
   border-radius: 0;
-  background: #1a1a1a;
+  background: var(--color-bg-tertiary);
 }
 
 .castPhoto {
@@ -300,7 +300,7 @@
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  color: #444;
+  color: var(--color-text-muted);
 }
 
 .castInfo {
@@ -353,8 +353,9 @@
   aspect-ratio: 2/3;
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: #222;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
 }
 
 .similarImage {
@@ -378,22 +379,20 @@
   font-weight: var(--font-bold);
   color: var(--color-warning);
   z-index: 2;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .similarTitle {
   margin-top: var(--space-3);
   font-weight: var(--font-medium);
   font-size: var(--text-sm);
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--color-text-secondary);
   text-align: center;
-  opacity: 0.8;
-  transition: color 0.2s, opacity 0.2s;
+  transition: color 0.2s;
 }
 
 .similarCard:hover .similarTitle {
-  color: white;
-  opacity: 1;
+  color: var(--color-accent);
 }
 
 /* ============ TRAILER MODAL ============ */

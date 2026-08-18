@@ -24,8 +24,8 @@
   background: linear-gradient(
     to top,
     var(--color-bg) 0%,
-    rgba(10, 10, 10, 0.8) 50%,
-    rgba(10, 10, 10, 0.4) 100%
+    rgba(var(--color-bg-rgb), 0.8) 50%,
+    rgba(var(--color-bg-rgb), 0.3) 100%
   );
   z-index: 0;
 }
@@ -45,7 +45,7 @@
   font-weight: 900;
   margin-bottom: var(--space-3);
   letter-spacing: -0.02em;
-  background: linear-gradient(to bottom, #fff 40%, rgba(255, 255, 255, 0.5));
+  background: var(--color-title-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -59,11 +59,11 @@
   margin-bottom: var(--space-6);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  background: rgba(var(--color-accent-rgb), 0.1);
+  background: var(--color-accent-subtle);
   display: inline-block;
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-full);
-  border: 1px solid rgba(var(--color-accent-rgb), 0.2);
+  border: 1px solid var(--color-accent-subtle);
 }
 
 .overview {
@@ -97,7 +97,7 @@
 .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(255, 255, 255, 0.1);
+  border: 3px solid var(--color-border);
   border-top-color: var(--color-accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;

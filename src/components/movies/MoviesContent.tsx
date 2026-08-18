@@ -14,14 +14,12 @@ import {
   SheetFooter,
 } from "@/components/ui/Sheet/Sheet";
 import { GenreFilter } from "@/components/ui/GenreFilter";
-import { useUIStore } from "@/stores/uiStore";
 import styles from "@/app/movies/page.module.css";
 
 interface FilterState {
   minRating: number;
   sortBy: string;
   withGenres: string;
-  region?: string;
   maxRuntime?: number;
 }
 
@@ -38,7 +36,6 @@ export default function MoviesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const selectedRegions = useUIStore((s) => s.selectedRegions);
   // Initialize filters from URL query params (from navbar genre links)
   const initialGenre = searchParams.get("genre");
   const initialSort = searchParams.get("sort");
@@ -49,12 +46,6 @@ export default function MoviesContent() {
     withGenres: initialGenre || "",
   }));
 
-  // Sync global region store into filters
-  const activeFilters = useMemo(() => ({
-    ...filters,
-    region: selectedRegions[0] || "IN",
-  }), [filters, selectedRegions]);
-
   // TanStack Query for infinite scrolling with automatic race condition handling
   const {
     data,
@@ -64,7 +55,7 @@ export default function MoviesContent() {
     isLoading,
     isError,
     error,
-  } = useDiscoverMoviesInfinite(activeFilters);
+  } = useDiscoverMoviesInfinite(filters);
 
   // Flatten pages into a single array
   const movies = useMemo(() => {
@@ -125,6 +116,8 @@ export default function MoviesContent() {
     return `${hours}h ${minutes}m`;
   };
 
+  const activeFilterCount = (filters.withGenres ? 1 : 0) + (filters.minRating > 0 ? 1 : 0) + (filters.sortBy !== "popularity.desc" ? 1 : 0) + (filters.maxRuntime && filters.maxRuntime > 0 ? 1 : 0);
+
   return (
     <>
       <main className={styles.main}>
@@ -134,11 +127,17 @@ export default function MoviesContent() {
             <p className={styles.subtitle}>Explore popular movies</p>
           </div>
           <button
-            className={styles.filterButton}
+            className={`${styles.filterButton} ${activeFilterCount > 0 ? styles.filterButtonActive : ""}`}
             onClick={() => setIsFilterOpen(true)}
+            aria-label="Open movie filters"
           >
-            <SlidersHorizontal size={18} />
-            Filters
+            <span className={styles.filterIconWrapper}>
+              <SlidersHorizontal size={15} />
+            </span>
+            <span>Filters</span>
+            {activeFilterCount > 0 && (
+              <span className={styles.activeFilterBadge}>{activeFilterCount}</span>
+            )}
           </button>
         </header>
 
@@ -214,7 +213,7 @@ export default function MoviesContent() {
           <div style={{ padding: "16px 24px", flex: 1, overflowY: "auto" }}>
             {/* Sort */}
             <div style={{ marginBottom: 24 }}>
-              <label style={{ display: "block", marginBottom: 8, fontWeight: 500, color: "#fff" }}>
+              <label style={{ display: "block", marginBottom: 8, fontWeight: 500, color: "var(--color-text)" }}>
                 Sort By
               </label>
               <select
@@ -226,13 +225,13 @@ export default function MoviesContent() {
                   width: "100%",
                   padding: "10px 12px",
                   borderRadius: 8,
-                  border: "1px solid rgba(255,255,255,0.15)",
-                  background: "rgba(255,255,255,0.05)",
-                  color: "#fff",
+                  border: "1px solid var(--color-input-border)",
+                  background: "var(--color-input-bg)",
+                  color: "var(--color-input-text)",
                 }}
               >
                 {SORT_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
+                  <option key={opt.value} value={opt.value} style={{ background: "var(--color-surface)", color: "var(--color-text)" }}>
                     {opt.label}
                   </option>
                 ))}
@@ -241,7 +240,7 @@ export default function MoviesContent() {
 
             {/* Max Runtime */}
             <div style={{ marginBottom: 24 }}>
-              <label style={{ display: "block", marginBottom: 8, fontWeight: 500, color: "#fff" }}>
+              <label style={{ display: "block", marginBottom: 8, fontWeight: 500, color: "var(--color-text)" }}>
                 Max Duration: {formatRuntime(filters.maxRuntime || 0)}
               </label>
               <input
@@ -256,13 +255,13 @@ export default function MoviesContent() {
                     maxRuntime: Number(e.target.value),
                   }))
                 }
-                style={{ width: "100%" }}
+                style={{ width: "100%", accentColor: "var(--color-accent)" }}
               />
             </div>
 
             {/* Min Rating */}
             <div style={{ marginBottom: 24 }}>
-              <label style={{ display: "block", marginBottom: 8, fontWeight: 500, color: "#fff" }}>
+              <label style={{ display: "block", marginBottom: 8, fontWeight: 500, color: "var(--color-text)" }}>
                 Minimum Rating: {filters.minRating}+
               </label>
               <input
@@ -277,13 +276,13 @@ export default function MoviesContent() {
                     minRating: Number(e.target.value),
                   }))
                 }
-                style={{ width: "100%" }}
+                style={{ width: "100%", accentColor: "var(--color-accent)" }}
               />
             </div>
 
             {/* Genres */}
             <div style={{ marginBottom: 24 }}>
-              <label style={{ display: "block", marginBottom: 8, fontWeight: 500, color: "#fff" }}>
+              <label style={{ display: "block", marginBottom: 8, fontWeight: 500, color: "var(--color-text)" }}>
                 Genres
               </label>
               <GenreFilter
@@ -306,9 +305,9 @@ export default function MoviesContent() {
               style={{
                 padding: "10px 20px",
                 borderRadius: 8,
-                border: "1px solid rgba(255,255,255,0.2)",
-                background: "transparent",
-                color: "#fff",
+                border: "1px solid var(--color-border)",
+                background: "var(--color-surface)",
+                color: "var(--color-text)",
                 cursor: "pointer",
               }}
             >
@@ -320,10 +319,10 @@ export default function MoviesContent() {
                 padding: "10px 20px",
                 borderRadius: 8,
                 border: "none",
-                background: "var(--accent, #6366f1)",
-                color: "#fff",
+                background: "var(--color-accent)",
+                color: "var(--color-text-on-accent, #ffffff)",
                 cursor: "pointer",
-                fontWeight: 500,
+                fontWeight: 600,
               }}
             >
               Show Results

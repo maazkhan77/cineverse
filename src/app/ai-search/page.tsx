@@ -3,17 +3,18 @@
 import { useAction } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useState, useRef, useEffect } from "react";
+import { ArrowLeft, Sparkles, RotateCcw, Send, Film, Compass } from "lucide-react";
 import { ChatStream, Message } from "@/components/ai/ChatStream";
 import { EnrichedMovie } from "@/components/ai/AIMovieCard";
 import styles from "./page.module.css";
 
 const SUGGESTIONS = [
-  "Movies like Interstellar but happier",
-  "Dark psychological thrillers",
-  "Feel-good 90s comedies",
-  "Hidden gems on Netflix",
-  "Oscar-winning performances",
-  "Mind-bending sci-fi",
+  "Movies like Interstellar with mind-bending visuals",
+  "Dark psychological thrillers with shocking twists",
+  "Cozy feel-good 90s cinema with nostalgic vibes",
+  "Underrated hidden gems with great cinematography",
+  "Masterpiece cinema with incredible original scores",
+  "High-tension detective murder mysteries",
 ];
 
 export default function AISearchPage() {
@@ -23,6 +24,7 @@ export default function AISearchPage() {
   const [inputValue, setInputValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
   
   // AI Recommendation Action
   const recommendMovies = useAction(api.ai.recommendMovies);
@@ -31,14 +33,23 @@ export default function AISearchPage() {
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 120) + "px";
     }
   }, [inputValue]);
 
   // Scroll to bottom on new messages
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (hasStarted) {
+      chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isLoading, hasStarted]);
+
+  const handleReset = () => {
+    setMessages([]);
+    setHasStarted(false);
+    setInputValue("");
+    setIsLoading(false);
+  };
 
   const handleSend = async (text: string) => {
     if (!text.trim() || isLoading) return;
@@ -64,8 +75,8 @@ export default function AISearchPage() {
         id: crypto.randomUUID(),
         role: "assistant",
         content: hasResults 
-          ? `Here's what I found for "${text}":` 
-          : "I couldn't find specific matches. Try describing the mood, a similar movie, or a genre you're into!",
+          ? `Here are curated cinema matches based on **"${text}"**:` 
+          : "I couldn't find exact matches for that description. Try describing the mood, visual tone, or a favorite movie you'd like something similar to!",
         movies: hasResults ? recommendations : undefined,
       };
       
@@ -79,7 +90,7 @@ export default function AISearchPage() {
       const errorMsg: Message = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: "Oops! Something went wrong. Make sure the AI is configured and try again.",
+        content: "We encountered an issue connecting to the AI Oracle. Please try again shortly.",
       };
       setMessages((prev) => [...prev, errorMsg]);
     }
@@ -94,51 +105,84 @@ export default function AISearchPage() {
 
   return (
     <main className={styles.main}>
-      {/* Ambient Background */}
+      {/* Ambient Background Glow */}
       <div className={styles.ambientBg} />
       
-      {/* Chat History */}
-      <div className={`${styles.chatArea} ${!hasStarted ? styles.hidden : ''}`}>
-        <ChatStream messages={messages} />
-        
-        {isLoading && (
-          <div className={styles.thinkingWrapper}>
-            <div className={styles.thinkingDots}>
-              <span className={styles.thinkingDot} />
-              <span className={styles.thinkingDot} />
-              <span className={styles.thinkingDot} />
-              <span className={styles.thinkingText}>Thinking...</span>
-            </div>
-          </div>
+      {/* Top Sub-Header Bar (Respects 75px Navbar Height) */}
+      <div className={styles.subHeader}>
+        <button 
+          onClick={() => window.history.back()} 
+          className={styles.navActionBtn}
+          aria-label="Go Back"
+        >
+          <ArrowLeft size={15} />
+          <span>Back</span>
+        </button>
+
+        <div className={styles.oracleBadge}>
+          <Sparkles size={13} className={styles.sparkleIcon} />
+          <span>Canima Oracle AI</span>
+        </div>
+
+        {hasStarted ? (
+          <button 
+            onClick={handleReset} 
+            className={styles.resetChatBtn}
+            aria-label="New Session"
+          >
+            <RotateCcw size={13} />
+            <span>New Search</span>
+          </button>
+        ) : (
+          <div style={{ width: 80 }} />
         )}
-        
-        <div ref={chatEndRef} />
       </div>
 
-      {/* Input Section */}
-      <div className={`${styles.inputContainer} ${hasStarted ? styles.chat : styles.hero}`}>
-        <div className={styles.inputInner}>
-          
-          {/* Hero Title */}
-          <div className={styles.titleWrapper}>
-            {/* Back Button */}
-            <button 
-              onClick={() => window.history.back()} 
-              className={styles.backButton}
-              aria-label="Go Back"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-              </svg>
-              Back
-            </button>
+      {/* Main Viewport Content Area */}
+      {!hasStarted ? (
+        /* Hero View (Centered in available height) */
+        <div className={styles.heroView}>
+          <div className={styles.heroContent}>
+            <div className={styles.heroBadge}>
+              <Compass size={14} />
+              <span>AI Cinematic Intelligence</span>
+            </div>
 
             <h1 className={styles.heroTitle}>The Oracle</h1>
             <p className={styles.heroSubtitle}>
-              Your personal AI movie advisor. Ask anything.
+              Describe any mood, aesthetic, plot twist, or vibe to discover your next favorite movie.
             </p>
             
-            {/* Suggestion Chips */}
+            {/* Input Box in Hero */}
+            <div className={styles.heroInputWrapper}>
+              <div className={styles.inputRow}>
+                <textarea
+                  ref={textareaRef}
+                  className={styles.textarea}
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Ask anything... e.g. 'Nostalgic 80s sci-fi with synth soundtrack'"
+                  rows={1}
+                />
+                <button 
+                  className={styles.submitBtn}
+                  onClick={() => handleSend(inputValue)}
+                  disabled={!inputValue.trim() || isLoading}
+                  aria-label="Send query"
+                >
+                  <Send size={15} />
+                </button>
+              </div>
+
+              <div className={styles.inputFooter}>
+                <span className={styles.keyboardHint}>
+                  Press <kbd className={styles.kbd}>↵ Enter</kbd> to search • <kbd className={styles.kbd}>Shift + ↵</kbd> for new line
+                </span>
+              </div>
+            </div>
+
+            {/* Curated Suggestion Chips */}
             <div className={styles.suggestions}>
               {SUGGESTIONS.map((s) => (
                 <button 
@@ -146,37 +190,75 @@ export default function AISearchPage() {
                   className={styles.suggestionChip}
                   onClick={() => handleSend(s)}
                 >
-                  {s}
+                  <Film size={12} className={styles.chipIcon} />
+                  <span>{s}</span>
                 </button>
               ))}
             </div>
           </div>
+        </div>
+      ) : (
+        /* Chat View (Scrollable container + Pinned bottom input) */
+        <div className={styles.chatView}>
+          <div className={styles.chatScrollArea} ref={chatScrollRef}>
+            <div className={styles.chatInner}>
+              <ChatStream messages={messages} />
+              
+              {isLoading && (
+                <div className={styles.thinkingWrapper}>
+                  <div className={styles.thinkingBox}>
+                    <div className={styles.thinkingIcon}>
+                      <Sparkles size={16} />
+                    </div>
+                    <div className={styles.thinkingTextCol}>
+                      <span className={styles.thinkingTitle}>Consulting The Oracle</span>
+                      <span className={styles.thinkingSubtitle}>Analyzing themes, cinematography, and reviews...</span>
+                    </div>
+                    <div className={styles.thinkingWave}>
+                      <span className={styles.waveBar} />
+                      <span className={styles.waveBar} />
+                      <span className={styles.waveBar} />
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <div ref={chatEndRef} />
+            </div>
+          </div>
 
-          {/* Input Box */}
-          <div className={styles.inputWrapper}>
-            <div className={styles.inputRow}>
-              <textarea
-                ref={textareaRef}
-                className={styles.textarea}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Describe what you're in the mood for..."
-                rows={1}
-              />
-              <button 
-                className={styles.submitBtn}
-                onClick={() => handleSend(inputValue)}
-                disabled={!inputValue.trim() || isLoading}
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
-                </svg>
-              </button>
+          {/* Pinned Bottom Input Bar */}
+          <div className={styles.bottomBar}>
+            <div className={styles.bottomInputWrapper}>
+              <div className={styles.inputRow}>
+                <textarea
+                  ref={textareaRef}
+                  className={styles.textarea}
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Ask a follow-up or explore another cinema theme..."
+                  rows={1}
+                />
+                <button 
+                  className={styles.submitBtn}
+                  onClick={() => handleSend(inputValue)}
+                  disabled={!inputValue.trim() || isLoading}
+                  aria-label="Send query"
+                >
+                  <Send size={15} />
+                </button>
+              </div>
+
+              <div className={styles.inputFooter}>
+                <span className={styles.keyboardHint}>
+                  Press <kbd className={styles.kbd}>↵ Enter</kbd> to send • <kbd className={styles.kbd}>Shift + ↵</kbd> for new line
+                </span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </main>
   );
 }

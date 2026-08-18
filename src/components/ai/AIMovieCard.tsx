@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Star, Sparkles, ArrowUpRight } from "lucide-react";
 import styles from "./AIMovieCard.module.css";
 
 export interface EnrichedMovie {
@@ -19,52 +20,67 @@ interface AIMovieCardProps {
 }
 
 export function AIMovieCard({ movie }: AIMovieCardProps) {
-  const router = useRouter();
-
-  const handleClick = () => {
-    if (movie.tmdbId) {
-      router.push(`/${movie.mediaType}/${movie.tmdbId}`);
-    }
-  };
+  const targetUrl = movie.tmdbId 
+    ? `/${movie.mediaType || "movie"}/${movie.tmdbId}`
+    : `/search?q=${encodeURIComponent(movie.title)}`;
 
   const posterUrl = movie.posterPath 
-    ? `https://image.tmdb.org/t/p/w300${movie.posterPath}`
-    : null;
+    ? `https://image.tmdb.org/t/p/w500${movie.posterPath}`
+    : "/placeholder-poster.png";
 
   return (
-    <div 
+    <Link 
+      href={targetUrl}
       className={styles.movieCard}
-      onClick={handleClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === "Enter" && handleClick()}
+      aria-label={`View details for ${movie.title}`}
     >
       <div className={styles.posterWrapper}>
-        {posterUrl ? (
-          <Image
-            src={posterUrl}
-            alt={movie.title}
-            fill
-            className={styles.poster}
-            sizes="(max-width: 768px) 50vw, 180px"
-          />
-        ) : (
-          <div className={styles.noPoster}>🎬</div>
-        )}
-        {movie.voteAverage && (
-          <span className={styles.rating}>⭐ {movie.voteAverage.toFixed(1)}</span>
-        )}
+        <Image
+          src={posterUrl}
+          alt={movie.title}
+          fill
+          className={styles.poster}
+          sizes="(max-width: 768px) 50vw, 220px"
+        />
+        
+        {/* Floating Top Badges */}
+        <div className={styles.badgeRow}>
+          {movie.voteAverage ? (
+            <span className={styles.rating}>
+              <Star size={11} className={styles.starIcon} />
+              {movie.voteAverage.toFixed(1)}
+            </span>
+          ) : (
+            <span />
+          )}
+          <span className={styles.mediaBadge}>
+            {movie.mediaType === "tv" ? "TV" : "MOVIE"}
+          </span>
+        </div>
       </div>
       
       <div className={styles.cardInfo}>
-        <h4 className={styles.cardTitle}>{movie.title}</h4>
-        <div className={styles.cardMeta}>
-          <span>{movie.year}</span>
-          <span className={styles.mediaType}>{movie.mediaType}</span>
+        <div className={styles.titleRow}>
+          <h4 className={styles.cardTitle}>{movie.title}</h4>
+          {movie.year > 0 && <span className={styles.cardYear}>{movie.year}</span>}
         </div>
-        <p className={styles.cardReason}>{movie.reason}</p>
+
+        {movie.reason && (
+          <div className={styles.reasonContainer}>
+            <div className={styles.reasonHeader}>
+              <Sparkles size={11} className={styles.reasonIcon} />
+              <span>AI Match Rationale</span>
+            </div>
+            <p className={styles.cardReason}>{movie.reason}</p>
+          </div>
+        )}
+
+        <div className={styles.cardFooter}>
+          <span>View Details</span>
+          <ArrowUpRight size={13} className={styles.arrowIcon} />
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -76,7 +92,7 @@ export function AIMovieGrid({ movies }: AIMovieGridProps) {
   return (
     <div className={styles.cardGrid}>
       {movies.map((movie, i) => (
-        <AIMovieCard key={`${movie.title}-${i}`} movie={movie} />
+        <AIMovieCard key={`${movie.title}-${i}-${movie.tmdbId}`} movie={movie} />
       ))}
     </div>
   );

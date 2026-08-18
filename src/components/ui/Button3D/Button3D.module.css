@@ -39,7 +39,7 @@
   z-index: 1;
   transform: translateY(-4px);
   transition: transform 0.1s cubic-bezier(0.3, 0.7, 0.4, 1.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-border);
 }
 
 /* Press State */
@@ -56,31 +56,33 @@
 
 .primary .buttonTop {
   background-color: var(--color-accent);
-  color: white;
+  color: var(--color-text-on-accent, #ffffff);
+  border-color: transparent;
   box-shadow: 
-    0 2px 0 rgba(255, 255, 255, 0.1) inset, /* Top Highlight */
-    0 -1px 0 rgba(0, 0, 0, 0.1) inset;     /* Bottom Shadow */
+    0 2px 0 rgba(255, 255, 255, 0.15) inset, /* Top Highlight */
+    0 -1px 0 rgba(0, 0, 0, 0.15) inset;     /* Bottom Shadow */
 }
 
 .primary:hover .buttonTop {
   background-color: var(--color-accent-hover);
 }
 
-/* Secondary (Glass/Dark Metal) */
+/* Secondary (Theme Adaptive Face/Depth) */
 .secondary .buttonBottom {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--color-btn-secondary-bottom);
 }
 
 .secondary .buttonTop {
-  background-color: rgba(20, 20, 20, 0.8);
+  background-color: var(--color-btn-secondary-face);
   backdrop-filter: blur(8px);
   color: var(--color-text);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .secondary:hover .buttonTop {
-  background-color: rgba(40, 40, 40, 0.9);
-  border-color: rgba(255, 255, 255, 0.3);
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-border-hover);
 }
 
 /* Optional: Icon adjustment */

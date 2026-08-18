@@ -8,40 +8,32 @@ import { UserMenu } from "@/components/auth";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { 
   Search, Sparkles, ChevronDown, 
-  Flame, Star, Calendar, MonitorPlay, Clapperboard,
-  Sword, Map, User, Binoculars, Film,
-  Zap, Smile, Heart, Ghost, Rocket, Skull, Palette, Tv
+  Flame, Star, Calendar, MonitorPlay, Clapperboard
 } from "lucide-react";
 import styles from "./Navbar.module.css";
 
-// Lucide Icons mapped for Genres
+// Minimalist Genre definitions (Clean, silent luxury)
 const MOVIE_GENRES = [
-  { id: 28, name: "Action", icon: Zap },
-  { id: 35, name: "Comedy", icon: Smile },
-  { id: 18, name: "Drama", icon: Heart }, // Drama often assoc with emotion
-  { id: 27, name: "Horror", icon: Ghost },
-  { id: 878, name: "Sci-Fi", icon: Rocket },
-  { id: 10749, name: "Romance", icon: Heart },
-  { id: 53, name: "Thriller", icon: Skull },
-  { id: 16, name: "Animation", icon: Palette },
+  { id: 28, name: "Action" },
+  { id: 35, name: "Comedy" },
+  { id: 18, name: "Drama" },
+  { id: 27, name: "Horror" },
+  { id: 878, name: "Sci-Fi" },
+  { id: 10749, name: "Romance" },
+  { id: 53, name: "Thriller" },
+  { id: 16, name: "Animation" },
 ];
 
 const TV_GENRES = [
-  { id: 10759, name: "Action & Adventure", icon: Sword },
-  { id: 35, name: "Comedy", icon: Smile },
-  { id: 18, name: "Drama", icon: Mask }, // Using a generic icon if mask not avail, fallback below
-  { id: 10765, name: "Sci-Fi & Fantasy", icon: Rocket },
-  { id: 80, name: "Crime", icon: Binoculars }, // Crime/Investigation
-  { id: 10766, name: "Soap", icon: User }, // Character driven
-  { id: 10764, name: "Reality", icon: Map }, // "Real world"
-  { id: 16, name: "Animation", icon: Palette },
+  { id: 10759, name: "Action & Adventure" },
+  { id: 35, name: "Comedy" },
+  { id: 18, name: "Drama" },
+  { id: 10765, name: "Sci-Fi & Fantasy" },
+  { id: 80, name: "Crime" },
+  { id: 10766, name: "Soap" },
+  { id: 10764, name: "Reality" },
+  { id: 16, name: "Animation" },
 ];
-
-// Fallback for missing icons
-import { LucideProps } from "lucide-react";
-function Mask(props: LucideProps) {
-  return <Film {...props} />;
-}
 
 interface MegaMenuProps {
   type: "movies" | "series";
@@ -60,10 +52,10 @@ function MegaMenu({ type, isOpen, onClose }: MegaMenuProps) {
           <div className={styles.megaBackdrop} onClick={onClose} />
           <motion.div
             className={styles.megaMenu}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 5 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, y: 8, scale: 0.99 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 4, scale: 0.99 }}
+            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className={styles.megaContent}>
               {/* Left Column: Genres */}
@@ -77,20 +69,20 @@ function MegaMenu({ type, isOpen, onClose }: MegaMenuProps) {
                       className={styles.genreLink}
                       onClick={onClose}
                     >
-                      <genre.icon size={16} className={styles.genreIcon} />
-                      <span>{genre.name}</span>
+                      <span className={styles.genreDot} />
+                      <span className={styles.genreName}>{genre.name}</span>
                     </Link>
                   ))}
                 </div>
               </div>
 
-              {/* Right Column: Featured */}
+              {/* Right Column: Curated */}
               <div className={styles.megaSidebar}>
-                <div className={styles.sectionTitle}>Featured Collections</div>
+                <div className={styles.sectionTitle}>Curated</div>
                 <div className={styles.quickLinkList}>
                   <Link href={basePath} className={styles.featuredLink} onClick={onClose}>
                     <div className={styles.featuredIconWrapper}>
-                      <Flame size={18} />
+                      <Flame size={16} strokeWidth={2} />
                     </div>
                     <div className={styles.featuredText}>
                       <h4>Popular Now</h4>
@@ -100,32 +92,32 @@ function MegaMenu({ type, isOpen, onClose }: MegaMenuProps) {
                   
                   <Link href={`${basePath}?sort=vote_average.desc`} className={styles.featuredLink} onClick={onClose}>
                     <div className={styles.featuredIconWrapper}>
-                      <Star size={18} />
+                      <Star size={16} strokeWidth={2} />
                     </div>
-                     <div className={styles.featuredText}>
+                    <div className={styles.featuredText}>
                       <h4>Top Rated</h4>
-                      <p>All-time favorites</p>
+                      <p>Critically acclaimed</p>
                     </div>
                   </Link>
 
                   {type === "movies" ? (
                     <Link href={`${basePath}?filter=upcoming`} className={styles.featuredLink} onClick={onClose}>
                       <div className={styles.featuredIconWrapper}>
-                        <Calendar size={18} />
+                        <Calendar size={16} strokeWidth={2} />
                       </div>
-                       <div className={styles.featuredText}>
+                      <div className={styles.featuredText}>
                         <h4>Upcoming</h4>
-                        <p>Coming directly to theaters</p>
+                        <p>Coming to theaters</p>
                       </div>
                     </Link>
                   ) : (
                     <Link href={`${basePath}?filter=airing_today`} className={styles.featuredLink} onClick={onClose}>
                       <div className={styles.featuredIconWrapper}>
-                        <MonitorPlay size={18} />
+                        <MonitorPlay size={16} strokeWidth={2} />
                       </div>
-                       <div className={styles.featuredText}>
+                      <div className={styles.featuredText}>
                         <h4>Airing Today</h4>
-                        <p>New episodes dropping now</p>
+                        <p>New episodes</p>
                       </div>
                     </Link>
                   )}

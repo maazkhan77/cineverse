@@ -11,10 +11,12 @@
 }
 
 .title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text-primary, #fff);
+  font-family: var(--font-display, system-ui);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-text);
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .controls {
@@ -29,21 +31,24 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-primary, #fff);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
   cursor: pointer;
-  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .navButton:hover:not(.disabled) {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
+  background: var(--color-text);
+  color: var(--color-bg);
+  border-color: var(--color-text);
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .navButton.disabled {
-  opacity: 0.3;
+  opacity: 0.25;
   cursor: not-allowed;
 }
 

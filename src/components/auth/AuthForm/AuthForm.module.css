@@ -63,7 +63,7 @@
 .submitButton {
   padding: var(--space-3) var(--space-6);
   background: var(--color-accent);
-  color: var(--color-text);
+  color: var(--color-text-on-accent, #ffffff);
   font-size: var(--text-base);
   font-weight: 600;
   border-radius: var(--radius-md);

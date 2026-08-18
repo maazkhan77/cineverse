@@ -1,10 +1,17 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import styles from "./Footer.module.css";
 
 export function Footer() {
+  const pathname = usePathname();
+
+  if (pathname === "/ai-search") return null;
+
   return (
     <footer className={styles.footer}>
       <p className={styles.text}>
-        Made with <span className={styles.heart}>❤️</span> by{" "}
+        Made with <span className={styles.heart} role="img" aria-label="love">❤️</span> by{" "}
         <a
           href="https://iammaaz.in"
           target="_blank"
@@ -13,10 +20,6 @@ export function Footer() {
         >
           Maaz
         </a>
-        {" "}and{" "}
-        <span className={styles.link}>
-          Antigravity
-        </span>
       </p>
     </footer>
   );

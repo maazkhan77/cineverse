@@ -1,1 +1,2 @@
-export { HeroSection } from "./HeroSection";
+export { HeroSection, HeroSectionSkeleton } from "./HeroSection";
+

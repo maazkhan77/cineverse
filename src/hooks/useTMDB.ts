@@ -85,7 +85,6 @@ interface DiscoverFilters {
   sortBy?: string;
   minRating?: number;
   withGenres?: string;
-  region?: string;
   maxRuntime?: number;
 }
 
@@ -97,7 +96,6 @@ export function useDiscoverMoviesInfinite(filters: DiscoverFilters = {}) {
       return getMovies({
         page: pageParam as number,
         genreIds: filters.withGenres || undefined,
-        region: filters.region || undefined,
         maxRuntime: filters.maxRuntime || undefined,
       });
     },
@@ -120,7 +118,6 @@ export function useDiscoverSeriesInfinite(filters: DiscoverFilters = {}) {
       return getSeries({
         page: pageParam as number,
         genreIds: filters.withGenres || undefined,
-        region: filters.region || undefined,
         maxRuntime: filters.maxRuntime || undefined,
       });
     },

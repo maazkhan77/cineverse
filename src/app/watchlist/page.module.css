@@ -132,7 +132,7 @@
 .removeButton:hover {
   background-color: var(--color-error);
   border-color: var(--color-error);
-  color: white;
+  color: var(--color-text-on-accent, #ffffff);
 }
 
 /* ============ LIST VIEW ============ */
@@ -239,7 +239,7 @@
 .listRemoveButton:hover {
   background: var(--color-error);
   border-color: var(--color-error);
-  color: white;
+  color: var(--color-text-on-accent, #ffffff);
 }
 
 /* ============ LOADING ============ */
@@ -290,10 +290,10 @@
 
 .exploreButton {
   padding: 14px 32px;
-  background: linear-gradient(135deg, var(--color-accent) 0%, #b50710 100%);
+  background: var(--color-accent);
   border: none;
   border-radius: var(--radius-lg);
-  color: white;
+  color: var(--color-text-on-accent, #ffffff);
   font-family: var(--font-sans);
   font-size: var(--text-base);
   font-weight: var(--font-semibold);
@@ -302,8 +302,9 @@
 }
 
 .exploreButton:hover {
+  background: var(--color-accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(229, 9, 20, 0.4);
+  box-shadow: 0 8px 25px rgba(var(--color-accent-rgb), 0.4);
 }
 
 /* ============ NO RESULTS ============ */
@@ -327,7 +328,7 @@
 
 .resetButton:hover {
   background: var(--color-accent);
-  color: white;
+  color: var(--color-text-on-accent, #ffffff);
 }
 
 /* ============ RESPONSIVE ============ */

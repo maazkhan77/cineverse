@@ -68,7 +68,7 @@ export const recommendMovies = action({
 
     // Step 1: Get AI recommendations
     const response = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: "openai/gpt-oss-120b",
       messages: [
         {
           role: "system",
@@ -119,7 +119,11 @@ Example format:
     // Save AI search history
     await ctx.runMutation(api.searchQueries.saveAiHistory, {
       query,
-      results: enrichedRecommendations,
+      results: enrichedRecommendations.map((r) => ({
+        tmdbId: r.tmdbId,
+        title: r.title,
+        reason: r.reason,
+      })),
     });
 
     return { recommendations: enrichedRecommendations };

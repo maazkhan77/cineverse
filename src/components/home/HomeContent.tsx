@@ -1,6 +1,6 @@
 "use client";
 
-import { HeroSection, MoodTuner, MOOD_GENRES, Carousel, CarouselItem, TMDBBlockedFallback } from "@/components/ui";
+import { HeroSection, HeroSectionSkeleton, MoodTuner, MOOD_GENRES, Carousel, CarouselItem, TMDBBlockedFallback } from "@/components/ui";
 import { BentoGrid } from "@/components/ui/BentoGrid/BentoGrid";
 import { MovieCard } from "@/components/ui/MovieCard";
 import { Skeleton } from "@/components/ui/Skeleton/Skeleton";
@@ -73,7 +73,7 @@ export default function HomeContent() {
         <Carousel title={title}>
           {Array.from({ length: 8 }).map((_, i) => (
             <CarouselItem key={i}>
-              <Skeleton variant="rect" style={{ width: 180, height: 270, borderRadius: 12 }} />
+              <Skeleton variant="rect" style={{ width: "100%", aspectRatio: "2/3", borderRadius: "var(--radius-md, 8px)" }} />
             </CarouselItem>
           ))}
         </Carousel>
@@ -112,8 +112,10 @@ export default function HomeContent() {
 
   return (
     <main className={styles.main}>
-      {/* Hero Section */}
-      {!loadingTrendingMovies && trendingMovies.length > 0 && (
+      {/* Hero Section Placeholder during load to prevent CLS */}
+      {loadingTrendingMovies ? (
+        <HeroSectionSkeleton />
+      ) : trendingMovies.length > 0 ? (
         <HeroSection
           items={trendingMovies.slice(0, 5).map(item => ({
             id: item.id,
@@ -126,7 +128,7 @@ export default function HomeContent() {
           }))}
           onItemClick={handleItemClick}
         />
-      )}
+      ) : null}
 
       <motion.div 
         className={styles.content}
@@ -162,7 +164,10 @@ export default function HomeContent() {
           <h3 className={styles.sectionHeader} style={{ marginBottom: '20px', marginTop: '40px' }}>
             Featured Collections
           </h3>
-          <BentoGrid movies={filterByMood(trendingMovies)} />
+          <BentoGrid 
+            movies={filterByMood(trendingMovies)} 
+            isLoading={loadingTrendingMovies}
+          />
         </motion.div>
 
         <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>

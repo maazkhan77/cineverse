@@ -36,14 +36,12 @@
   top: calc(100% + 12px);
   right: 0;
   width: 240px;
-  background: rgba(20, 20, 30, 0.95);
+  background: var(--color-surface-elevated);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
   padding: 8px;
-  box-shadow: 
-    0 10px 40px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.05);
+  box-shadow: var(--shadow-xl);
   transform-origin: top right;
   overflow: hidden;
 }
@@ -54,14 +52,14 @@
 
 .userName {
   font-weight: 600;
-  color: white;
+  color: var(--color-text);
   font-size: 0.95rem;
   margin-bottom: 2px;
 }
 
 .userEmail {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -73,7 +71,7 @@
   gap: 12px;
   width: 100%;
   padding: 10px 16px;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--color-text-secondary);
   font-size: 0.875rem;
   font-weight: 500;
   border-radius: 8px;
@@ -85,12 +83,12 @@
 }
 
 .dropdownItem:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: var(--color-surface-hover);
+  color: var(--color-text);
 }
 
 .dropdownItem svg {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-muted);
   transition: color 0.2s ease;
 }
 
@@ -99,24 +97,24 @@
 }
 
 .signOut {
-  color: #ff6b6b;
+  color: var(--color-error);
 }
 
 .signOut:hover {
-  background: rgba(229, 9, 20, 0.1);
-  color: #ff4444;
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--color-error);
 }
 
 .signOut svg {
-  color: #ff6b6b;
+  color: var(--color-error);
 }
 
 .signOut:hover svg {
-  color: #ff4444;
+  color: var(--color-error);
 }
 
 .divider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-border);
   margin: 6px 0;
 }

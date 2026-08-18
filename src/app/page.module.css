@@ -23,8 +23,10 @@
 }
 
 .sectionHeader {
+  font-family: var(--font-display, system-ui);
   font-size: var(--text-2xl);
   font-weight: 800;
+  color: var(--color-text);
   margin-top: var(--space-10);
   margin-bottom: var(--space-6);
   padding-bottom: var(--space-3);

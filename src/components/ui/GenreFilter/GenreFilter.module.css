@@ -25,10 +25,11 @@
 
 .chip.selected {
   background-color: var(--color-accent);
-  color: var(--color-text);
+  color: var(--color-text-on-accent, #ffffff);
   border-color: var(--color-accent);
 }
 
 .chip.selected:hover {
   background-color: var(--color-accent-hover);
+  color: var(--color-text-on-accent, #ffffff);
 }

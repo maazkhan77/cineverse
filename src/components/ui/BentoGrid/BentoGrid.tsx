@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/Skeleton/Skeleton";
 import styles from "./BentoGrid.module.css";
 
 interface BentoGridItem {
@@ -78,9 +79,54 @@ function BentoItem({ movie, variant = "standard", priority = false }: BentoItemP
 
 interface BentoGridProps {
   movies: BentoGridItem[];
+  isLoading?: boolean;
 }
 
-export function BentoGrid({ movies }: BentoGridProps) {
+export function BentoGridSkeleton() {
+  return (
+    <section className={styles.gridContainer} aria-label="Loading featured collections">
+      {/* Hero: Span 2x2 */}
+      <div className={`${styles.bentoItem} ${styles.hero}`}>
+        <Skeleton variant="rect" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
+      </div>
+
+      {/* Side items next to hero */}
+      <div className={`${styles.bentoItem} ${styles.standard}`}>
+        <Skeleton variant="rect" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
+      </div>
+      <div className={`${styles.bentoItem} ${styles.standard}`}>
+        <Skeleton variant="rect" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
+      </div>
+
+      {/* Below hero */}
+      <div className={`${styles.bentoItem} ${styles.standard}`}>
+        <Skeleton variant="rect" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
+      </div>
+      <div className={`${styles.bentoItem} ${styles.standard}`}>
+        <Skeleton variant="rect" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
+      </div>
+
+      {/* Wide panoramic item */}
+      <div className={`${styles.bentoItem} ${styles.wide}`}>
+        <Skeleton variant="rect" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
+      </div>
+
+      {/* Additional items */}
+      <div className={`${styles.bentoItem} ${styles.standard}`}>
+        <Skeleton variant="rect" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
+      </div>
+      <div className={`${styles.bentoItem} ${styles.standard}`}>
+        <Skeleton variant="rect" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
+      </div>
+    </section>
+  );
+}
+
+export function BentoGrid({ movies, isLoading }: BentoGridProps) {
+  if (isLoading) {
+    return <BentoGridSkeleton />;
+  }
+
   if (!movies || movies.length < 5) return null;
 
   return (
@@ -108,3 +154,4 @@ export function BentoGrid({ movies }: BentoGridProps) {
     </section>
   );
 }
+

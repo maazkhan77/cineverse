@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from "react";
 
 import { Button3D } from "@/components/ui/Button3D/Button3D";
 import { TrailerModal } from "@/components/ui";
+import { Skeleton } from "@/components/ui/Skeleton/Skeleton";
 import styles from "./HeroSection.module.css";
 
 interface HeroItem {
@@ -21,9 +22,48 @@ interface HeroItem {
 interface HeroSectionProps {
   items: HeroItem[];
   onItemClick?: (id: number, mediaType: "movie" | "tv") => void;
+  isLoading?: boolean;
 }
 
-export function HeroSection({ items, onItemClick }: HeroSectionProps) {
+export function HeroSectionSkeleton() {
+  return (
+    <section className={styles.skeletonHero} aria-label="Loading hero banner">
+      <div className={styles.skeletonBackdrop}>
+        <div className={styles.skeletonShimmer} />
+        <div className={styles.gradient} />
+      </div>
+
+      <div className={styles.skeletonContent}>
+        <div className={styles.skeletonInfo}>
+          <div className={styles.skeletonMeta}>
+            <Skeleton variant="rect" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
+          </div>
+          <div className={styles.skeletonTitle}>
+            <Skeleton variant="rect" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
+          </div>
+          <div className={styles.skeletonActions}>
+            <div className={styles.skeletonButton}>
+              <Skeleton variant="rect" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
+            </div>
+            <div className={styles.skeletonButton}>
+              <Skeleton variant="rect" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.skeletonIndicators}>
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className={styles.skeletonIndicatorTrack}>
+            <Skeleton variant="rect" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function HeroSection({ items = [], onItemClick, isLoading }: HeroSectionProps) {
   const [index, setIndex] = useState(0);
   const [showTrailer, setShowTrailer] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -36,8 +76,10 @@ export function HeroSection({ items, onItemClick }: HeroSectionProps) {
 
   // Auto-rotate items with progress tracking
   useEffect(() => {
+    if (isLoading || items.length === 0) return;
     if (showTrailer) return; // Pause while trailer modal is open
 
+    const itemCount = items.length;
     const startTime = Date.now();
     
     const progressInterval = setInterval(() => {
@@ -46,7 +88,7 @@ export function HeroSection({ items, onItemClick }: HeroSectionProps) {
     }, 50);
 
     const timer = setTimeout(() => {
-      setIndex((prev) => (prev + 1) % items.length);
+      setIndex((prev) => (prev + 1) % itemCount);
       setProgress(0);
     }, SLIDE_DURATION);
 
@@ -54,7 +96,7 @@ export function HeroSection({ items, onItemClick }: HeroSectionProps) {
       clearInterval(progressInterval);
       clearTimeout(timer);
     };
-  }, [items.length, index, showTrailer]);
+  }, [items.length, index, showTrailer, isLoading]);
 
   // Handle indicator click
   const goToSlide = (slideIndex: number) => {
@@ -86,7 +128,9 @@ export function HeroSection({ items, onItemClick }: HeroSectionProps) {
     }
   };
 
-  if (!currentItem) return null;
+  if (isLoading || !currentItem) {
+    return <HeroSectionSkeleton />;
+  }
 
   return (
     <section

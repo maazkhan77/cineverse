@@ -3,7 +3,8 @@ export { AmbientBackground } from "./AmbientBackground/AmbientBackground";
 export { Magnetic } from "./Magnetic/Magnetic";
 
 export * from "./Navbar/Navbar";
-export { HeroSection } from "./HeroSection";
+export { HeroSection, HeroSectionSkeleton } from "./HeroSection";
+
 export { GenreFilter } from "./GenreFilter";
 export { ContentModal } from "./ContentModal";
 export { ContentRow } from "./ContentRow";

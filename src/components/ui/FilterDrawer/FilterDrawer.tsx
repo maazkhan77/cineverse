@@ -19,7 +19,6 @@ export interface FilterState {
   minVotes?: number;
   sortBy: string;
   withGenres: string;
-  region?: string;
   maxRuntime?: number;
 }
 
@@ -150,27 +149,6 @@ export function FilterDrawer({ isOpen, onClose, onApply, mediaType, initialFilte
                   onGenreChange={(ids) => setFilters(prev => ({ ...prev, withGenres: ids.join(",") }))}
                   mediaType={mediaType}
                 />
-              </div>
-
-              <div className={styles.section}>
-                <h3 className={styles.label}>Region</h3>
-                <select 
-                  className={styles.select}
-                  value={filters.region || ""}
-                  onChange={(e) => setFilters(prev => ({ ...prev, region: e.target.value }))}
-                >
-                  <option value="">All Regions</option>
-                  <option value="US">United States</option>
-                  <option value="IN">India</option>
-                  <option value="GB">United Kingdom</option>
-                  <option value="CA">Canada</option>
-                  <option value="AU">Australia</option>
-                  <option value="FR">France</option>
-                  <option value="DE">Germany</option>
-                  <option value="JP">Japan</option>
-                  <option value="KR">South Korea</option>
-                  <option value="BR">Brazil</option>
-                </select>
               </div>
             </div>
 
