@@ -11,7 +11,9 @@ export function Footer() {
   return (
     <footer className={styles.footer}>
       <p className={styles.text}>
-        Made with <span className={styles.heart} role="img" aria-label="love">❤️</span> by{" "}
+        <span className={styles.label}>Made with</span>
+        <span className={styles.heart} role="img" aria-label="love">❤️</span>
+        <span className={styles.by}>by</span>
         <a
           href="https://iammaaz.in"
           target="_blank"

@@ -1,18 +1,39 @@
 .footer {
+  position: relative;
+  z-index: 10;
   width: 100%;
-  padding: 28px 24px;
+  padding: 32px 24px 80px;
   text-align: center;
   border-top: 1px solid var(--color-border);
   background: var(--color-bg);
 }
 
+@media (min-width: 769px) {
+  .footer {
+    padding: 32px 24px;
+  }
+}
+
 .text {
-  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.95rem;
   font-weight: 500;
   letter-spacing: 0.3px;
   margin: 0;
-  /* Force explicit color so plain text nodes ("Made with" / "by") are always visible */
   color: var(--color-text-secondary) !important;
+}
+
+.label,
+.by {
+  color: var(--color-text-secondary) !important;
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: inline-block;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .heart {
@@ -21,7 +42,7 @@
   animation: heartbeat 1.5s ease-in-out infinite;
   display: inline-block;
   vertical-align: middle;
-  margin: 0 4px;
+  margin: 0 2px;
 }
 
 @keyframes heartbeat {
@@ -33,8 +54,10 @@
   color: var(--color-text) !important;
   text-decoration: none;
   font-weight: 700;
+  font-size: 0.95rem;
   transition: all 0.2s ease;
   position: relative;
+  display: inline-block;
 }
 
 .link:hover {
